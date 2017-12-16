@@ -21,8 +21,6 @@ typedef struct {
   int offset_y;
 } gfx_SpriteDef;
 
-#define GFX_SPRITEDEF_INIT { NULL, 0, 0, 0, 0 }
-
 typedef struct {
   int a;
 } gfx_Sprite;
