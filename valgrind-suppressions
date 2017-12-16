@@ -1,0 +1,58 @@
+{
+   ignore_unversioned_libs
+   Memcheck:Leak
+   ...
+   obj:*/lib*/lib*.so
+   ...
+}
+{
+   ignore_versioned_libs
+   Memcheck:Leak
+   ...
+   obj:*/lib*/lib*.so.*
+   ...
+}
+{
+   sdl_bullshit_1
+   Memcheck:Addr1
+   ...
+   obj:/usr/lib/libSDL2-2.0.so.0.7.0
+   ...
+}
+{
+   sdl_bullshit_2
+   Memcheck:Addr2
+   ...
+   obj:/usr/lib/libSDL2-2.0.so.0.7.0
+   ...
+}
+{
+   sdl_bullshit_4
+   Memcheck:Addr4
+   ...
+   obj:/usr/lib/libSDL2-2.0.so.0.7.0
+   ...
+}
+{
+   sdl_bullshit_8
+   Memcheck:Addr8
+   ...
+   obj:/usr/lib/libSDL2-2.0.so.0.7.0
+   ...
+}
+{
+   xcb_param
+   Memcheck:Param
+   writev(vector[...])
+   ...
+   obj:/usr/lib/libxcb.so.1.1.0
+   ...
+}
+{
+   i965_dri_a4
+   Memcheck:Addr4
+   ...
+   obj:/usr/lib/xorg/modules/dri/i965_dri.so
+   ...
+}
+
