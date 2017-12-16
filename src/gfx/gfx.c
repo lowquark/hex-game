@@ -21,33 +21,52 @@ void gfx_deinit() {
 }
 
 
-gfx_Sprite * gfx_create_sprite(const gfx_SpriteDef * def) {
-  return NULL;
+gfx_Sprite * gfx_load_sprite(const gfx_SpriteDef * def) {
+  assert(rr);
+  assert(def);
+  assert(def->surface);
+
+  gfx_Sprite * spr = malloc(sizeof *spr);
+
+  spr->texture = SDL_CreateTextureFromSurface(rr, def->surface);
+
+  spr->size_x = def->surface->w;
+  spr->size_y = def->surface->h;
+  spr->offset_x = def->offset_x;
+  spr->offset_y = def->offset_y;
+
+  return spr;
 }
-void gfx_destroy_sprite(gfx_Sprite * s) {
+void gfx_unload_sprite(gfx_Sprite * s) {
+  if(s) {
+    SDL_DestroyTexture(s->texture);
+    s->texture = NULL;
+    s->offset_x = 0;
+    s->offset_y = 0;
+    free(s);
+  }
 }
 
 
 void gfx_draw_sprite(gfx_Sprite * spr, int x, int y, const gfx_Color * color) {
-  SDL_Rect rekt_outer = { x - 8, y - 9, 18, 20 };
-  SDL_Rect rekt_inner = { x - 7, y - 8, 16, 18 };
+  assert(rr);
+  assert(spr);
+  assert(spr->texture);
+
+  SDL_Texture * tex = spr->texture;
 
   if(color) {
-    SDL_SetRenderDrawColor(rr, color->r, color->g, color->b, 0xFF);
+    SDL_SetTextureColorMod(tex, color->r, color->g, color->b);
   } else {
-    SDL_SetRenderDrawColor(rr, 0x88, 0x88, 0x88, 0xFF);
+    SDL_SetTextureColorMod(tex, 0xFF, 0xFF, 0xFF);
   }
-  SDL_RenderFillRect(rr, &rekt_outer);
 
-  if(color) {
-    SDL_SetRenderDrawColor(rr,
-                           color->r - color->r / 4,
-                           color->g - color->g / 4,
-                           color->b - color->b / 4, 0xFF);
-  } else {
-    SDL_SetRenderDrawColor(rr, 0x44, 0x44, 0x44, 0xFF);
-  }
-  SDL_RenderFillRect(rr, &rekt_inner);
+  SDL_Rect rekt = { x - spr->offset_x,
+                    y - spr->offset_y,
+                    spr->size_x,
+                    spr->size_y, };
+
+  SDL_RenderCopy(rr, tex, NULL, &rekt);
 }
 
 void gfx_draw_surface(SDL_Surface * surf, int x, int y, const gfx_Color * color) {

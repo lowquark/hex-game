@@ -72,6 +72,7 @@ const gs_cell_t * gs_get_cell(hex_vec2i_t p) {
 void gs_set_cell(hex_vec2i_t p, const gs_cell_t * cell) {
   // this cell will be shallow copied into the hash
   gs_cell_t new_cell;
+  ZERO(new_cell);
   cell_copy(&new_cell, cell);
 
   gs_cell_t * old_cell = gs_cellhash_get(p);

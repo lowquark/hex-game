@@ -1,9 +1,9 @@
 
 include config.mk
 
-all: game test
+all: app test
 
-game: $(GAME_SRC)
+app: $(APP_SRC)
 	clang $(CFLAGS) -o $@ $^ $(LIBS)
 
 test: $(TEST_SRC)
