@@ -10,11 +10,10 @@
 #include <gs/gs.h>
 #include <asset/png.h>
 
-#include <test/test.h>
-
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 
+hex_vec2i_t selected_hex;
 static gfx_Sprite * single_tile = NULL;
 
 static const gs_color_t nespresso[5] = {
@@ -143,12 +142,23 @@ void draw_tiles(const rect2i_t * screen_rect_pixels) {
       // retrieve the tile
       const gs_cell_t * cell = gs_get_cell(tile_pos);
 
-      if(cell) {
+      if(tile_pos.x == selected_hex.x && tile_pos.y == selected_hex.y) {
+        gfx_Color c;
+        c.r = 0xFF;
+        c.g = 0xFF;
+        c.b = 0xFF;
+        c.a = 0xFF;
+
+        if(single_tile) {
+          gfx_draw_sprite(single_tile, tile_x_pix, tile_y_pix, &c);
+        }
+      } else if(cell) {
         // draw it
         gfx_Color c;
         c.r = cell->tile.fg_color.r;
         c.g = cell->tile.fg_color.g;
         c.b = cell->tile.fg_color.b;
+        c.a = 0xFF;
         if(tile_pos.x == 0) {
           c.r = 0xFF;
         }
@@ -158,13 +168,9 @@ void draw_tiles(const rect2i_t * screen_rect_pixels) {
         if(tile_pos.y + tile_pos.x == 0) {
           c.b = 0xFF;
         }
-        //c.r = (uint8_t)(tile_pos.x*20);
-        //c.g = (uint8_t)(tile_pos.y*20);
-        //c.b = 0x00;
-        c.a = 0xFF;
 
         if(single_tile) {
-          gfx_draw_sprite(single_tile, tile_x_pix + 30, tile_y_pix, &c);
+          gfx_draw_sprite(single_tile, tile_x_pix, tile_y_pix, &c);
         }
       }
     }
@@ -183,6 +189,30 @@ void draw() {
   draw_tiles(&whole_window);
 
   gfx_flush();
+}
+
+void handle_keypress(SDL_Keycode sym)
+{
+  switch(sym) {
+    case SDLK_e:
+      selected_hex = hex_downright(selected_hex);
+      break;
+    case SDLK_w:
+      selected_hex = hex_down(selected_hex);
+      break;
+    case SDLK_q:
+      selected_hex = hex_downleft(selected_hex);
+      break;
+    case SDLK_a:
+      selected_hex = hex_upleft(selected_hex);
+      break;
+    case SDLK_s:
+      selected_hex = hex_up(selected_hex);
+      break;
+    case SDLK_d:
+      selected_hex = hex_upright(selected_hex);
+      break;
+  }
 }
 
 int main(int argc, char ** argv) {
@@ -224,6 +254,9 @@ int main(int argc, char ** argv) {
           if(event.key.keysym.sym == SDLK_0) {
             quit = true;
             break;
+          } else {
+            handle_keypress(event.key.keysym.sym);
+            draw();
           }
         } else if(event.type == SDL_WINDOWEVENT) {
           if(event.window.event == SDL_WINDOWEVENT_EXPOSED) {
@@ -235,8 +268,6 @@ int main(int argc, char ** argv) {
         }
       }
     }
-
-    //test_hex();
 
     gs_deinit();
 

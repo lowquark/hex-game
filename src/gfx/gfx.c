@@ -81,7 +81,7 @@ void gfx_draw_surface(SDL_Surface * surf, int x, int y, const gfx_Color * color)
     SDL_SetTextureColorMod(tex, 0xFF, 0xFF, 0xFF);
   }
 
-  SDL_Rect rekt = { x - surf->w/2, y - surf->h/2, surf->w, surf->h };
+  SDL_Rect rekt = { x, y, surf->w, surf->h };
 
   SDL_RenderCopy(rr, tex, NULL, &rekt);
 
