@@ -2,30 +2,29 @@
 # module sources
 HEX_MODULE_SRC += src/hex/bresenham.c
 
-GS_MODULE_SRC += src/gs/gs.c
-GS_MODULE_SRC += src/gs/cellhash.c
-
 GFX_MODULE_SRC += src/gfx/gfx.c
 
 ASSET_MODULE_SRC += src/asset/png.c
 
 GAME_MODULE_SRC += 
 
+UTIL_MODULE_SRC += src/util/hash2d.c
+
 # module checks / test module
 TEST_MODULE_SRC += src/test/test.c
 
 TEST_MODULE_SRC += src/hex/check.c
-TEST_MODULE_SRC += src/gs/check.c
 TEST_MODULE_SRC += src/asset/check.c
+TEST_MODULE_SRC += src/util/check.c
 
 # binaries
 TEST_SRC += $(TEST_MODULE_SRC)
-TEST_SRC += $(GS_MODULE_SRC)
 TEST_SRC += $(HEX_MODULE_SRC)
+TEST_SRC += $(UTIL_MODULE_SRC)
 TEST_SRC += src/test/main.c
 
 APP_SRC += $(HEX_MODULE_SRC)
-APP_SRC += $(GS_MODULE_SRC)
+APP_SRC += $(UTIL_MODULE_SRC)
 APP_SRC += $(GFX_MODULE_SRC)
 APP_SRC += $(ASSET_MODULE_SRC)
 APP_SRC += $(GAME_MODULE_SRC)

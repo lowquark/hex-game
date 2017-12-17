@@ -8,8 +8,9 @@
 #include <hex/hex.h>
 #include <test/test.h>
 #include <gfx/gfx.h>
-#include <gs/gs.h>
+#include <game/game.h>
 #include <asset/png.h>
+#include <util/hash2d.h>
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
@@ -27,6 +28,7 @@ static const int tile_spacing_x_pixels = 23;
 static const int tile_spacing_y_pixels = 20;
 static const int tile_stagger_y_pixels = tile_spacing_y_pixels / 2;
 
+/*
 static const gs_color_t nespresso[5] = {
   GS_COLOR_FROM24(0x2e2e2c),
   GS_COLOR_FROM24(0x402108),
@@ -46,8 +48,10 @@ static const gs_color_t dirty[3] = {
   GS_COLOR_FROM24(0x725222),
   GS_COLOR_FROM24(0x6d4720),
 };
+*/
 
 void generate_map() {
+  /*
   for(int i = 0 ; i < 5000 ; i ++) {
     gs_cell_t cell;
     cell.mobs = NULL;
@@ -97,25 +101,7 @@ void generate_map() {
 
     gs_set_cell(pos, &cell);
   }
-}
-
-void update_gamestate() {
-  for(int i = 0 ; i < 500 ; i ++) {
-    gs_cell_t cell;
-    cell.mobs = NULL;
-    cell.items = NULL;
-    cell.mob_num = 0;
-    cell.item_num = 0;
-    cell.tile.sprite_id = 0;
-    cell.tile.fg_color = nespresso[rand() % 5];
-    cell.tile.bg_color = nespresso[rand() % 5];
-
-    hex_vec2i_t pos;
-    pos.x = (rand() % 9) - 4;
-    pos.y = (rand() % 9) - 4;
-
-    gs_set_cell(pos, &cell);
-  }
+  */
 }
 
 void unload_sprites() {
@@ -168,6 +154,7 @@ void draw_tiles(int imin, int imax, int jmin, int jmax) {
       get_hex_coord(&tile_pos, i, j);
       get_screen_coord(&tile_x_pix, &tile_y_pix, i, j);
 
+      /*
       // retrieve the tile
       const gs_cell_t * cell = gs_get_cell(tile_pos);
 
@@ -182,12 +169,14 @@ void draw_tiles(int imin, int imax, int jmin, int jmax) {
         //gfx_draw_sprite(&sub_tile_sprite, tile_x_pix, tile_y_pix, &c);
         gfx_draw_sprite(&single_tile_sprite, tile_x_pix, tile_y_pix, &c);
       }
+      */
     }
   }
 }
 void draw_mobs(int imin, int imax, int jmin, int jmax) {
   for(int j = jmin ; j <= jmax ; j ++) {
     for(int i = imin ; i <= imax ; i ++) {
+      /*
       hex_vec2i_t tile_pos;
       int tile_x_pix, tile_y_pix;
 
@@ -205,12 +194,13 @@ void draw_mobs(int imin, int imax, int jmin, int jmax) {
           gfx_draw_sprite(&wall_sprite, tile_x_pix, tile_y_pix, &c);
         }
       }
+      */
     }
   }
 }
 
 void draw() {
-  rect2i_t whole_window;
+  SDL_Rect whole_window;
   whole_window.x = 0;
   whole_window.y = 0;
   whole_window.w = 640;
@@ -277,7 +267,6 @@ int main(int argc, char ** argv) {
     gfx_init(window);
 
     load_sprites();
-    gs_init();
 
     generate_map();
 
@@ -308,7 +297,6 @@ int main(int argc, char ** argv) {
       }
     }
 
-    gs_deinit();
 
     unload_sprites();
     gfx_deinit();

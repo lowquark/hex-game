@@ -10,16 +10,16 @@ typedef struct {
 
 typedef struct {
   unsigned int type_id;
-} game_DrawTile;
+} game_TileState;
 
 typedef struct {
   unsigned int type_id;
-} game_DrawMob;
+} game_MobState;
 
 typedef struct {
-  game_Tile tile;
-  game_Mob mob;
-} game_DrawCell;
+  game_TileState tile;
+  game_MobState mob;
+} game_CellState;
 
 
 void game_init();
@@ -39,11 +39,9 @@ void game_step_movedownright();
 
 
 // logical distinction in time
-extern void game_eventhook_onSync(const game_TileDraw * tile, hex_vec2i_t pos);
+extern void game_eventhook_onSync(const game_TileState * tile, hex_vec2i_t pos);
 // tile updated
-extern void game_eventhook_onTileUpdate(const game_TileDraw * tile, hex_vec2i_t pos);
-// object updated
-extern void game_eventhook_onObjectUpdate(const game_ObjectDraw * obj, hex_vec2i_t pos);
+extern void game_eventhook_onCellUpdate(const game_TileState * tile, hex_vec2i_t pos);
 // message received
 extern void game_eventhook_onMessage(const char * message);
 // 
@@ -51,9 +49,9 @@ void game_flushevents();
 
 
 // 
-extern void game_draw_tile(const game_TileDraw * tile, hex_vec2i_t pos);
+extern void game_draw_tile(const game_TileState * tile, hex_vec2i_t pos);
 //
-extern void game_draw_object(const game_TileDraw * tile, hex_vec2i_t pos);
+extern void game_draw_object(const game_TileState * tile, hex_vec2i_t pos);
 //
 void game_draw();
 
