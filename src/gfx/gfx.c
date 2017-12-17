@@ -21,39 +21,53 @@ void gfx_deinit() {
 }
 
 
-gfx_Sprite * gfx_load_sprite(const gfx_SpriteDef * def) {
+gfx_SpriteSheet * gfx_load_spritesheet(const SDL_Surface * surface) {
   assert(rr);
-  assert(def);
-  assert(def->surface);
+  assert(surface);
 
-  gfx_Sprite * spr = malloc(sizeof *spr);
+  gfx_SpriteSheet * ss = malloc(sizeof *ss);
 
-  spr->texture = SDL_CreateTextureFromSurface(rr, def->surface);
+  // documentation specifically states surf is unmodified
+  ss->texture = SDL_CreateTextureFromSurface(rr, (SDL_Surface *)surface);
 
-  spr->size_x = def->surface->w;
-  spr->size_y = def->surface->h;
-  spr->offset_x = def->offset_x;
-  spr->offset_y = def->offset_y;
+  ss->size_x = surface->w;
+  ss->size_y = surface->h;
 
-  return spr;
+  return ss;
 }
-void gfx_unload_sprite(gfx_Sprite * s) {
+void gfx_unload_spritesheet(gfx_SpriteSheet * s) {
   if(s) {
     SDL_DestroyTexture(s->texture);
     s->texture = NULL;
-    s->offset_x = 0;
-    s->offset_y = 0;
+    s->size_x = 0;
+    s->size_y = 0;
     free(s);
   }
 }
 
+gfx_Sprite gfx_sprite(gfx_SpriteSheet * sheet,
+                      int x, int y, int w, int h,
+                      int offset_x, int offset_y)
+{
+  gfx_Sprite spr;
+  spr.sheet = sheet;
+  spr.sheet_x = x;
+  spr.sheet_y = y;
+  spr.size_x = w;
+  spr.size_y = h;
+  spr.offset_x = offset_x;
+  spr.offset_y = offset_y;
+  return spr;
+}
 
-void gfx_draw_sprite(gfx_Sprite * spr, int x, int y, const gfx_Color * color) {
+void gfx_draw_sprite(const gfx_Sprite * spr, int x, int y, const gfx_Color * color) {
   assert(rr);
   assert(spr);
-  assert(spr->texture);
+  assert(spr->sheet);
+  assert(spr->sheet->texture);
 
-  SDL_Texture * tex = spr->texture;
+  gfx_SpriteSheet * ss = spr->sheet;
+  SDL_Texture * tex = ss->texture;
 
   if(color) {
     SDL_SetTextureColorMod(tex, color->r, color->g, color->b);
@@ -61,19 +75,25 @@ void gfx_draw_sprite(gfx_Sprite * spr, int x, int y, const gfx_Color * color) {
     SDL_SetTextureColorMod(tex, 0xFF, 0xFF, 0xFF);
   }
 
-  SDL_Rect rekt = { x - spr->offset_x,
-                    y - spr->offset_y,
-                    spr->size_x,
-                    spr->size_y, };
+  SDL_Rect src_rekt = { spr->sheet_x,
+                        spr->sheet_y,
+                        spr->size_x,
+                        spr->size_y, };
 
-  SDL_RenderCopy(rr, tex, NULL, &rekt);
+  SDL_Rect dst_rekt = { x - spr->offset_x,
+                        y - spr->offset_y,
+                        spr->size_x,
+                        spr->size_y, };
+
+  SDL_RenderCopy(rr, tex, &src_rekt, &dst_rekt);
 }
 
-void gfx_draw_surface(SDL_Surface * surf, int x, int y, const gfx_Color * color) {
+void gfx_draw_surface(const SDL_Surface * surf, int x, int y, const gfx_Color * color) {
   assert(rr);
   assert(surf);
 
-  SDL_Texture * tex = SDL_CreateTextureFromSurface(rr, surf);
+  // documentation specifically states surf is unmodified
+  SDL_Texture * tex = SDL_CreateTextureFromSurface(rr, (SDL_Surface *)surf);
 
   if(color) {
     SDL_SetTextureColorMod(tex, color->r, color->g, color->b);
