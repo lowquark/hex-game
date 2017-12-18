@@ -43,6 +43,27 @@ hash2d_t * hash2d_deinit(hash2d_t * h) {
   return h;
 }
 
+void hash2d_clear(hash2d_t * h) {
+  unsigned long size = h->size;
+  hash2d_entry_t ** entries = h->entries;
+
+  for(unsigned long i = 0 ; i < size ; i ++) {
+    // free chain
+    hash2d_entry_t * entry = entries[i];
+
+    while(entry) {
+      // cache next pointer
+      hash2d_entry_t * next = entry->next;
+      // free this one
+      free(entry);
+      // try again with the next
+      entry = next;
+    }
+
+    entries[i] = 0;
+  }
+}
+
 
 static hash2d_entry_t ** bucket_of(hash2d_t * h, int x, int y) {
   assert(h->entries);

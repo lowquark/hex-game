@@ -6,7 +6,7 @@ GFX_MODULE_SRC += src/gfx/gfx.c
 
 ASSET_MODULE_SRC += src/asset/png.c
 
-GAME_MODULE_SRC += 
+GAME_MODULE_SRC += src/game/game.c
 
 UTIL_MODULE_SRC += src/util/hash2d.c
 

@@ -11,6 +11,7 @@
 #include <game/game.h>
 #include <asset/png.h>
 #include <util/hash2d.h>
+#include <util/vector.h>
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
@@ -28,80 +29,74 @@ static const int tile_spacing_x_pixels = 23;
 static const int tile_spacing_y_pixels = 20;
 static const int tile_stagger_y_pixels = tile_spacing_y_pixels / 2;
 
+typedef struct {
+  gfx_Sprite sprite;
+  gfx_Color color;
+} scene_tile_t;
+typedef struct {
+  gfx_Sprite sprite;
+  gfx_Color color;
+} scene_mob_t;
+typedef struct {
+  scene_tile_t tile;
+  scene_mob_t * mobs;
+  int mob_num;
+} scene_cell_t;
+
+hash2d_t scene_cell_hash;
+
+
 /*
-static const gs_color_t nespresso[5] = {
-  GS_COLOR_FROM24(0x2e2e2c),
-  GS_COLOR_FROM24(0x402108),
-  GS_COLOR_FROM24(0x4b1e0d),
-  GS_COLOR_FROM24(0xbd6416),
-  GS_COLOR_FROM24(0xfdaf3e),
-};
-static const gs_color_t grassy[5] = {
-  GS_COLOR_FROM24(0x67ab05),
-  GS_COLOR_FROM24(0x80bf26),
-  GS_COLOR_FROM24(0xa4e333),
-  GS_COLOR_FROM24(0xc8ff66),
-  GS_COLOR_FROM24(0xe9ff96),
-};
-static const gs_color_t dirty[3] = {
-  GS_COLOR_FROM24(0x7e5f40),
-  GS_COLOR_FROM24(0x725222),
-  GS_COLOR_FROM24(0x6d4720),
-};
+static void scene_cell_init(scene_cell_t * cell) {
+  memset(cell, 0, sizeof(*cell));
+}
+static void scene_cell_deinit(scene_cell_t * cell) {
+  free(cell->mobs);
+  memset(cell, 0, sizeof(*cell));
+}
+static void scene_cell_set_mobs(scene_cell_t * cell, const scene_mob_t * mobs, int mob_num) {
+  free(cell->mobs);
+  cell->mobs = malloc(mob_num*sizeof(scene_mob_t));
+  memcpy(cell->mobs, mobs, mob_num*sizeof(scene_mob_t));
+}
+
+
+static void hash2d_scene_cell_deinit(int x, int y, void * cell, void * _) {
+  scene_cell_deinit((scene_cell_t *)cell);
+}
+static void scene_clear_cells() {
+  hash2d_each(&scene_cell_hash, hash2d_scene_cell_deinit, NULL);
+  hash2d_clear(&scene_cell_hash);
+}
 */
 
-void generate_map() {
-  /*
-  for(int i = 0 ; i < 5000 ; i ++) {
-    gs_cell_t cell;
-    cell.mobs = NULL;
-    cell.items = NULL;
-    cell.mob_num = 0;
-    cell.item_num = 0;
-    cell.tile.sprite_id = 0;
 
-    hex_vec2i_t pos;
+static void scene_set_cell_sprites(const game_CellState * game_cell) {
+  int x = game_cell->pos.x;
+  int y = game_cell->pos.y;
 
-    int r = rand() % 3;
+  scene_cell_t * cell = (scene_cell_t *)hash2d_get(&scene_cell_hash, x, y);
 
-    if(r == 0) {
-      int x = (rand() % 8);
-      int y = (rand() % 8);
-
-      //int sum = x + y + z;
-
-      pos.x = x;
-      pos.y = y;
-
-      cell.tile.fg_color = dirty[rand() % 3];
-      cell.tile.bg_color = dirty[rand() % 3];
-    } else if(r == 1) {
-      int y = (rand() % 8);
-      int z = (rand() % 8);
-
-      //int sum = x + y + z;
-
-      pos.x = -y - z;
-      pos.y = y;
-
-      cell.tile.fg_color = nespresso[rand() % 5];
-      cell.tile.bg_color = nespresso[rand() % 5];
-    } else {
-      int x = (rand() % 8);
-      int z = (rand() % 8);
-
-      //int sum = x + y + z;
-
-      pos.x = x;
-      pos.y = -x - z;
-
-      cell.tile.fg_color = grassy[rand() % 5];
-      cell.tile.bg_color = grassy[rand() % 5];
-    }
-
-    gs_set_cell(pos, &cell);
+  if(cell == NULL) {
+    cell = (scene_cell_t *)hash2d_alloc(&scene_cell_hash, x, y, sizeof(*cell));
+  } else {
+    free(cell->mobs);
+    cell->mobs = NULL;
   }
-  */
+
+  switch(game_cell->tile.type_id) {
+    case 1:
+      cell->tile.sprite = grass_tile_sprite;
+      break;
+    default:
+      cell->tile.sprite = single_tile_sprite;
+      break;
+  }
+
+  cell->tile.color.r = game_cell->tile.color.r;
+  cell->tile.color.g = game_cell->tile.color.g;
+  cell->tile.color.b = game_cell->tile.color.b;
+  cell->tile.color.a = 0xFF;
 }
 
 void unload_sprites() {
@@ -145,56 +140,53 @@ void get_hex_coord(hex_vec2i_t * coord, int i, int j) {
   coord->x = i;
   coord->y = (j*2 + abs(i % 2) - i)/2;
 }
-void draw_tiles(int imin, int imax, int jmin, int jmax) {
-  for(int j = jmin ; j <= jmax ; j ++) {
-    for(int i = imin ; i <= imax ; i ++) {
-      hex_vec2i_t tile_pos;
-      int tile_x_pix, tile_y_pix;
+void draw_cell(int i, int j) {
+  hex_vec2i_t tile_pos;
+  int tile_x_pix, tile_y_pix;
 
-      get_hex_coord(&tile_pos, i, j);
-      get_screen_coord(&tile_x_pix, &tile_y_pix, i, j);
+  get_hex_coord(&tile_pos, i, j);
+  get_screen_coord(&tile_x_pix, &tile_y_pix, i, j);
 
-      /*
-      // retrieve the tile
-      const gs_cell_t * cell = gs_get_cell(tile_pos);
+  // draw tile
+  const scene_cell_t * cell = hash2d_get(&scene_cell_hash, tile_pos.x, tile_pos.y);
 
-      if(cell && tiles) {
-        gfx_Color c;
-        c.r = cell->tile.fg_color.r;
-        c.g = cell->tile.fg_color.g;
-        c.b = cell->tile.fg_color.b;
-        c.a = 0xFF;
+  if(cell) {
+    gfx_Color c = cell->tile.color;
 
-        //gfx_draw_sprite(&single_tile, tile_x_pix, tile_y_pix, &c);
-        //gfx_draw_sprite(&sub_tile_sprite, tile_x_pix, tile_y_pix, &c);
-        gfx_draw_sprite(&single_tile_sprite, tile_x_pix, tile_y_pix, &c);
-      }
-      */
+    gfx_draw_sprite(&cell->tile.sprite, tile_x_pix, tile_y_pix, &c);
+  }
+
+  int dist = hex_distance(tile_pos, selected_hex);
+
+  if(tile_pos.x == selected_hex.x && tile_pos.y == selected_hex.y) {
+    gfx_Color c;
+    c.r = 0xA0;
+    c.g = 0xA0;
+    c.b = 0xA0;
+    c.a = 0xFF;
+
+    if(tiles) {
+      gfx_draw_sprite(&wall_sprite, tile_x_pix, tile_y_pix, &c);
+    }
+  } else if(dist >= 7) {
+    gfx_Color c;
+    c.r = 0xA0 - 0x08 * (dist - 7);
+    c.g = 0xA0 - 0x08 * (dist - 7);
+    c.b = 0xA0 - 0x08 * (dist - 7);
+    c.a = 0xFF;
+
+    if(tiles) {
+      gfx_draw_sprite(&wall_sprite, tile_x_pix, tile_y_pix, &c);
     }
   }
 }
-void draw_mobs(int imin, int imax, int jmin, int jmax) {
+void draw_cells(int imin, int imax, int jmin, int jmax) {
   for(int j = jmin ; j <= jmax ; j ++) {
-    for(int i = imin ; i <= imax ; i ++) {
-      /*
-      hex_vec2i_t tile_pos;
-      int tile_x_pix, tile_y_pix;
-
-      get_hex_coord(&tile_pos, i, j);
-      get_screen_coord(&tile_x_pix, &tile_y_pix, i, j);
-
-      if(tile_pos.x == selected_hex.x && tile_pos.y == selected_hex.y) {
-        gfx_Color c;
-        c.r = 0x80;
-        c.g = 0x80;
-        c.b = 0x80;
-        c.a = 0xFF;
-
-        if(tiles) {
-          gfx_draw_sprite(&wall_sprite, tile_x_pix, tile_y_pix, &c);
-        }
-      }
-      */
+    for(int i = imin ; i <= imax ; i += 2) {
+      draw_cell(i, j);
+    }
+    for(int i = imin + 1; i <= imax ; i += 2) {
+      draw_cell(i, j);
     }
   }
 }
@@ -214,8 +206,7 @@ void draw() {
   gfx_Color bg_color = { 0x11, 0x11, 0x11, 0xFF };
   gfx_clear(&bg_color);
 
-  draw_tiles(imin, imax, jmin, jmax);
-  draw_mobs(imin, imax, jmin, jmax);
+  draw_cells(imin, imax, jmin, jmax);
 
   gfx_flush();
 }
@@ -268,7 +259,12 @@ int main(int argc, char ** argv) {
 
     load_sprites();
 
-    generate_map();
+    hash2d_init(&scene_cell_hash);
+
+    game_DrawStateHandlers handlers = {
+      .cell = scene_set_cell_sprites,
+    };
+    game_drawstate(&handlers);
 
     draw();
 
@@ -297,6 +293,8 @@ int main(int argc, char ** argv) {
       }
     }
 
+
+    hash2d_deinit(&scene_cell_hash);
 
     unload_sprites();
     gfx_deinit();
