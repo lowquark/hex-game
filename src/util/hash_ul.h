@@ -1,26 +1,24 @@
 #ifndef UTIL_HASH64_H
 #define UTIL_HASH64_H
 
-#include <stddef.h>
+#define HASH_KEY_T    unsigned long
+#define HASH_ENTRY_T  hash_ul_entry_t
+#define HASH_T        hash_ul_t
 
-typedef struct hash_ul_entry {
-  struct hash_ul_entry * next;
-  unsigned long key;
-  char data[];
-} hash_ul_entry_t;
+#define HASH_CLEAR    hash_ul_clear
+#define HASH_CREATE   hash_ul_create
+#define HASH_DESTROY  hash_ul_destroy
+#define HASH_FIND     hash_ul_find
 
-typedef struct {
-  hash_ul_entry_t ** entries;
-  unsigned long size;
-} hash_ul_t;
+#include "hash_gen.h"
 
+#undef HASH_KEY_T
+#undef HASH_ENTRY_T
+#undef HASH_T
 
-void hash_ul_clear(hash_ul_t * h);
-
-void * hash_ul_create (hash_ul_t * h, unsigned long key, size_t data_size);
-void   hash_ul_destroy(hash_ul_t * h, unsigned long key);
-void * hash_ul_find   (hash_ul_t * h, unsigned long key);
-
-void hash_ul_each(hash_ul_t * h, void (* cb)(unsigned long key, void * data, void * ud), void * ud);
+#undef HASH_CLEAR
+#undef HASH_CREATE
+#undef HASH_DESTROY
+#undef HASH_FIND
 
 #endif

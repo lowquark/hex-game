@@ -1,24 +1,21 @@
 #ifndef UTIL_HASH_2I_H
 #define UTIL_HASH_2I_H
 
-#include <stddef.h>
+typedef struct { int x, y; } hash_2i_key_t;
 
-typedef struct hash_2i_entry {
-  int x;
-  int y;
-  struct hash_2i_entry * next;
-  char data[];
-} hash_2i_entry_t;
+#define HASH_KEY_T    hash_2i_key_t
+#define HASH_ENTRY_T  hash_2i_entry_t
+#define HASH_T        hash_2i_t
 
-typedef struct {
-  hash_2i_entry_t ** entries;
-  unsigned long size;
-} hash_2i_t;
+#define HASH_CLEAR    hash_2i_clear
 
-#define HASH_2I_INIT { NULL, 0 }
+#include "hash_gen.h"
 
+#undef HASH_KEY_T
+#undef HASH_ENTRY_T
+#undef HASH_T
 
-void hash_2i_clear(hash_2i_t * h);
+#undef HASH_CLEAR
 
 // malloc zero'ed data indexable by x, y
 void * hash_2i_create(hash_2i_t * h, int x, int y, size_t size);
