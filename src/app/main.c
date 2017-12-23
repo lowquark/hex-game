@@ -80,7 +80,7 @@ int main(int argc, char ** argv) {
 
   if(window) {
     gfx_init(window);
-    scene_load_sprites();
+    scene_loadsprites();
 
     scene_cleartiles();
     game_DrawStateHandlers handlers = {
@@ -89,8 +89,6 @@ int main(int argc, char ** argv) {
     game_drawstate(&handlers);
 
     draw();
-
-    //update_gamestate();
 
     bool quit = false;
     while(!quit) {
@@ -115,7 +113,8 @@ int main(int argc, char ** argv) {
       }
     }
 
-    scene_unload_sprites();
+    scene_clear();
+    scene_unloadsprites();
     gfx_deinit();
 
     SDL_DestroyWindow(window);

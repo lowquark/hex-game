@@ -20,9 +20,9 @@ typedef struct {
 } scene_TileSprite;
 
 // load required assets to gfx module
-void scene_load_sprites(void);
+void scene_loadsprites(void);
 // unload loaded assets
-void scene_unload_sprites(void);
+void scene_unloadsprites(void);
 
 // creates an object, returns a reference id
 scene_Id scene_createobject(void);

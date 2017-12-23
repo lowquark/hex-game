@@ -23,8 +23,8 @@ static const int tile_spacing_y_pixels = 20;
 static const int tile_stagger_y_pixels = tile_spacing_y_pixels / 2;
 
 
-void scene_load_sprites() {
-  scene_unload_sprites();
+void scene_loadsprites() {
+  scene_unloadsprites();
 
   SDL_Surface * tiles_surface = asset_png_load("test.png");
 
@@ -41,7 +41,7 @@ void scene_load_sprites() {
     tiles_surface = NULL;
   }
 }
-void scene_unload_sprites(void) {
+void scene_unloadsprites(void) {
   gfx_unload_spritesheet(tiles);
   tiles = NULL;
 }
