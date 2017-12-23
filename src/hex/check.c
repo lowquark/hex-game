@@ -15,7 +15,7 @@ static void test_bresenham(int x0, int y0, int x1, int y1) {
   hex_vec2i_t bbuf[32];
   unsigned long n;
 
-  n = hex_bresenham_buf(bbuf, 32, src, dst);
+  n = (unsigned long)hex_bresenham_buf(bbuf, 32, src, dst);
 
   ck_assert_uint_gt(n,  0);
   ck_assert_uint_le(n, 32);

@@ -18,27 +18,23 @@ static inline game_color_t game_color_from24(uint32_t color) {
 }
 
 typedef struct {
-  unsigned int type_id;
+  unsigned int sprite_id;
   game_color_t color;
 } game_TileState;
 
 typedef struct {
-  unsigned int type_id;
+  unsigned int sprite_id;
   game_color_t color;
-} game_MobState;
+} game_EntityState;
 
 typedef struct {
-  hex_vec2i_t pos;
-  game_TileState tile;
-  game_MobState mob;
-} game_CellState;
-
-typedef struct {
-  void (*cell)(const game_CellState * state);
+  void (*entity)(unsigned int eid, hex_vec2i_t pos);
+  void (*tile)(hex_vec2i_t pos, const game_TileState * state);
 } game_DrawStateHandlers;
 
 typedef struct {
-  void (*cell_update)(const game_CellState * state);
+  void (*mob_move)();
+  void (*mob_strike)();
   void (*message)(const char * str);
 } game_DrawEventHandlers;
 

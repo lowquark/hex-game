@@ -1,59 +1,25 @@
 
-#include <util/hash2d.h>
+#include <util/hash_2i.h>
 
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
 
-static const unsigned long initial_size = 128;
+
+static const unsigned long initial_size = 32;
 
 
-hash2d_t * hash2d_init(hash2d_t * h) {
-  // allocate fresh
-  h->entries = calloc(sizeof(hash2d_entry_t *), initial_size);
-  h->size = initial_size;
-  return h;
-}
-
-hash2d_t * hash2d_deinit(hash2d_t * h) {
+void hash_2i_clear(hash_2i_t * h) {
   unsigned long size = h->size;
-  hash2d_entry_t ** entries = h->entries;
+  hash_2i_entry_t ** entries = h->entries;
 
   for(unsigned long i = 0 ; i < size ; i ++) {
     // free chain
-    hash2d_entry_t * entry = entries[i];
+    hash_2i_entry_t * entry = entries[i];
 
     while(entry) {
       // cache next pointer
-      hash2d_entry_t * next = entry->next;
-      // free this one
-      free(entry);
-      // try again with the next
-      entry = next;
-    }
-  }
-
-  // free buffer
-  free(h->entries);
-
-  // cleared!
-  h->entries = NULL;
-  h->size = 0;
-
-  return h;
-}
-
-void hash2d_clear(hash2d_t * h) {
-  unsigned long size = h->size;
-  hash2d_entry_t ** entries = h->entries;
-
-  for(unsigned long i = 0 ; i < size ; i ++) {
-    // free chain
-    hash2d_entry_t * entry = entries[i];
-
-    while(entry) {
-      // cache next pointer
-      hash2d_entry_t * next = entry->next;
+      hash_2i_entry_t * next = entry->next;
       // free this one
       free(entry);
       // try again with the next
@@ -62,10 +28,17 @@ void hash2d_clear(hash2d_t * h) {
 
     entries[i] = 0;
   }
+
+  // free buffer
+  free(h->entries);
+
+  // cleared!
+  h->entries = NULL;
+  h->size = 0;
 }
 
 
-static hash2d_entry_t ** bucket_of(hash2d_t * h, int x, int y) {
+static hash_2i_entry_t ** bucket_of(hash_2i_t * h, int x, int y) {
   assert(h->entries);
   assert(h->size > 0);
 
@@ -77,7 +50,7 @@ static hash2d_entry_t ** bucket_of(hash2d_t * h, int x, int y) {
   return h->entries + idx;
 }
 
-static void * find(int x, int y, hash2d_entry_t * list) {
+static void * find(int x, int y, hash_2i_entry_t * list) {
   while(list) {
     if(list->x == x && list->y == y) {
       return &list->data;
@@ -88,12 +61,18 @@ static void * find(int x, int y, hash2d_entry_t * list) {
 }
 
 
-void * hash2d_alloc(hash2d_t * h, int x, int y, size_t size) {
-  hash2d_entry_t ** slot = bucket_of(h, x, y);
+void * hash_2i_create(hash_2i_t * h, int x, int y, size_t size) {
+  if(h->entries == NULL) { 
+    // initialize if not already
+    h->entries = calloc(sizeof(hash_2i_entry_t *), initial_size);
+    h->size = initial_size;
+  }
+
+  hash_2i_entry_t ** slot = bucket_of(h, x, y);
 
   // advance last slot
   while(*slot) {
-    hash2d_entry_t * entry = *slot;
+    hash_2i_entry_t * entry = *slot;
 
     if(entry->x == x && entry->y == y) {
       // already exists, fail
@@ -104,7 +83,7 @@ void * hash2d_alloc(hash2d_t * h, int x, int y, size_t size) {
   }
 
   // reached end of chain, create a new entry
-  hash2d_entry_t * new_entry = calloc(sizeof(hash2d_entry_t) + size, 1);
+  hash_2i_entry_t * new_entry = calloc(sizeof(hash_2i_entry_t) + size, 1);
   new_entry->x = x;
   new_entry->y = y;
   new_entry->next = NULL;
@@ -114,11 +93,13 @@ void * hash2d_alloc(hash2d_t * h, int x, int y, size_t size) {
   return &new_entry->data;
 }
 
-void hash2d_free(hash2d_t * h, int x, int y) {
-  hash2d_entry_t ** slot = bucket_of(h, x, y);
+void hash_2i_destroy(hash_2i_t * h, int x, int y) {
+  if(h->entries == NULL) { return; }
+
+  hash_2i_entry_t ** slot = bucket_of(h, x, y);
 
   while(*slot) {
-    hash2d_entry_t * entry = *slot;
+    hash_2i_entry_t * entry = *slot;
 
     if(entry->x == x && entry->y == y) {
       // matches, skip over
@@ -133,17 +114,19 @@ void hash2d_free(hash2d_t * h, int x, int y) {
   }
 }
 
-void * hash2d_get(hash2d_t * h, int x, int y) {
+void * hash_2i_find(hash_2i_t * h, int x, int y) {
+  if(h->entries == NULL) { return NULL; }
+
   return find(x, y, *bucket_of(h, x, y));
 }
 
-void hash2d_each(hash2d_t * h, void (* cb)(int x, int y, void * data, void * ud), void * ud) {
+void hash_2i_each(hash_2i_t * h, void (* cb)(int x, int y, void * data, void * ud), void * ud) {
   unsigned long size = h->size;
-  hash2d_entry_t ** entries = h->entries;
+  hash_2i_entry_t ** entries = h->entries;
 
   for(unsigned long i = 0 ; i < size ; i ++) {
     // iterate chain
-    hash2d_entry_t * entry = entries[i];
+    hash_2i_entry_t * entry = entries[i];
 
     while(entry) {
       cb(entry->x, entry->y, &entry->data, ud);

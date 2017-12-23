@@ -46,7 +46,7 @@ int hex_bresenham_buf_h1(hex_vec2i_t * outbuf,
     OUTBUF_WRITE(current_p);
   }
 
-  return (outbuf_ptr - outbuf);
+  return (int)(outbuf_ptr - outbuf);
 }
 int hex_bresenham_buf_v1(hex_vec2i_t * outbuf,
                          int outbuf_len,

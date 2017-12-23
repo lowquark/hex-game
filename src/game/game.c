@@ -53,37 +53,38 @@ static const game_color_t dirty[3] = {
 void game_drawstate(const game_DrawStateHandlers * state) {
   for(int j = 0 ; j < 8 ; j ++) {
     for(int i = 0 ; i < 8 ; i ++) {
-      game_CellState cell;
+      game_TileState tile;
+      hex_vec2i_t pos;
 
-      memset(&cell, 0, sizeof(cell));
+      memset(&tile, 0, sizeof(tile));
 
-      cell.pos.x = i;
-      cell.pos.y = j;
+      pos.x = i;
+      pos.y = j;
 
-      cell.tile.type_id = 1;
-      cell.tile.color = grassy[rand() % 5];
+      tile.sprite_id = 1;
+      tile.color = grassy[rand() % 5];
 
-      state->cell(&cell);
+      state->tile(pos, &tile);
 
-      memset(&cell, 0, sizeof(cell));
+      memset(&tile, 0, sizeof(tile));
 
-      cell.pos.x = i;
-      cell.pos.y = -i-j;
+      pos.x = i;
+      pos.y = -i-j;
 
-      cell.tile.type_id = 1;
-      cell.tile.color = grassy[rand() % 5];
+      tile.sprite_id = 1;
+      tile.color = grassy[rand() % 5];
 
-      state->cell(&cell);
+      state->tile(pos, &tile);
 
-      memset(&cell, 0, sizeof(cell));
+      memset(&tile, 0, sizeof(tile));
 
-      cell.pos.x = -i-j;
-      cell.pos.y = j;
+      pos.x = -i-j;
+      pos.y = j;
 
-      cell.tile.type_id = 1;
-      cell.tile.color = grassy[rand() % 5];
+      tile.sprite_id = 1;
+      tile.color = grassy[rand() % 5];
 
-      state->cell(&cell);
+      state->tile(pos, &tile);
     }
   }
 }
