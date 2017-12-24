@@ -3,11 +3,15 @@
 
 #include <hex/hex.h>
 #include <util/hash_2i.h>
+#include <util/hash_ul.h>
 #include <asset/png.h>
 #include <gfx/gfx.h>
+
 #include <scene/scene.h>
+#include <scene/sprites.h>
 
 extern hash_2i_t scene_tile_hash;
+extern hash_ul_t scene_object_hash;
 
 //static hex_vec2i_t selected_hex;
 
@@ -23,8 +27,8 @@ static const int tile_spacing_y_pixels = 20;
 static const int tile_stagger_y_pixels = tile_spacing_y_pixels / 2;
 
 
-void scene_loadsprites() {
-  scene_unloadsprites();
+void scene_load_assets() {
+  scene_unload_assets();
 
   SDL_Surface * tiles_surface = asset_png_load("test.png");
 
@@ -41,7 +45,7 @@ void scene_loadsprites() {
     tiles_surface = NULL;
   }
 }
-void scene_unloadsprites(void) {
+void scene_unload_assets(void) {
   gfx_unload_spritesheet(tiles);
   tiles = NULL;
 }
@@ -66,7 +70,7 @@ static void get_hex_coord(hex_vec2i_t * coord, int i, int j) {
   coord->y = (j*2 + abs(i % 2) - i)/2;
 }
 
-scene_Id scene_objectat(int pixel_x, int pixel_y) {
+scene_id_t scene_objectat(int pixel_x, int pixel_y) {
   return 0;
 }
 hex_vec2i_t scene_hexat(int pixel_x, int pixel_y) {
@@ -84,10 +88,10 @@ static void draw_tile(int i, int j) {
   get_hex_coord(&tile_pos, i, j);
   get_screen_coord(&tile_x_pix, &tile_y_pix, i, j);
 
-  scene_TileSprite * spr = hash_2i_find(&scene_tile_hash, tile_pos.x, tile_pos.y);
+  const scene_tile_t * tile = scene_tile_find(tile_pos);
 
-  if(spr) {
-    c = spr->color;
+  if(tile) {
+    c = tile->color;
     gfx_draw_sprite(&single_tile_sprite, tile_x_pix, tile_y_pix, &c);
   } else {
     c.r = 0x44;
@@ -109,7 +113,35 @@ void draw_tiles(int imin, int imax, int jmin, int jmax) {
   }
 }
 
+/*
+void draw_objects() {
+  gfx_Color c;
+  c.r = 0xFF;
+  c.g = 0xFF;
+  c.b = 0xFF;
+  c.a = 0xFF;
+  gfx_draw_sprite(&hero_sprite, 100, 100, &c);
+
+
+  scene_Sprite ** s = scene_sortsprites();
+
+  while(*s) {
+    scene_Sprite * sprite = *s;
+
+    gfx_Color c;
+    c.r = 0xFF;
+    c.g = 0xFF;
+    c.b = 0xFF;
+    c.a = 0xFF;
+    gfx_draw_sprite(&hero_sprite, sprite->x, sprite->y, &c);
+
+    s ++;
+  }
+}
+*/
+
 void scene_tick(void) {
+  scene_tiles_tick();
 }
 void scene_draw(void) {
   SDL_Rect whole_window;
@@ -127,5 +159,6 @@ void scene_draw(void) {
   gfx_clear(&bg_color);
 
   draw_tiles(imin, imax, jmin, jmax);
+  //draw_objects();
 }
 

@@ -25,13 +25,12 @@ void draw() {
 }
 
 void draw_state_tile(hex_vec2i_t pos, const game_TileState * state) {
-  scene_TileSprite spr;
-  spr.id = state->sprite_id;
-  spr.color.r = state->color.r;
-  spr.color.g = state->color.g;
-  spr.color.b = state->color.b;
-  spr.color.a = 0xFF;
-  scene_settilesprite(pos, &spr);
+  scene_tile_state_t tst;
+  tst.color.r = state->color.r;
+  tst.color.g = state->color.g;
+  tst.color.b = state->color.b;
+  tst.color.a = 0xFF;
+  scene_tile_load(pos, &tst);
 
   //printf("<%d,%d>\n", pos.x, pos.y);
 }
@@ -60,9 +59,9 @@ void handle_keypress(SDL_Keycode sym) {
 }
 
 int main(int argc, char ** argv) {
-  test_all();
-
   SDL_SetMainReady();
+
+  test_all();
 
   if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
     printf("Unable to initialize SDL: %s", SDL_GetError());
@@ -70,19 +69,23 @@ int main(int argc, char ** argv) {
   }
 
   SDL_Window * window = SDL_CreateWindow(
-      "test",
-      SDL_WINDOWPOS_CENTERED,
-      SDL_WINDOWPOS_CENTERED, 
-      640,
-      480,
-      0
+    "test",
+    SDL_WINDOWPOS_CENTERED,
+    SDL_WINDOWPOS_CENTERED, 
+    640,
+    480,
+    0
   );
 
   if(window) {
     gfx_init(window);
-    scene_loadsprites();
+    scene_load_assets();
 
-    scene_cleartiles();
+    for(unsigned long i = 0 ; i < 20 ; i ++) {
+      scene_object_state_t obj = SCENE_OBJECT_STATE_NULL;
+      scene_object_load(i, &obj);
+    }
+
     game_DrawStateHandlers handlers = {
       .tile = draw_state_tile,
     };
@@ -114,7 +117,7 @@ int main(int argc, char ** argv) {
     }
 
     scene_clear();
-    scene_unloadsprites();
+    scene_unload_assets();
     gfx_deinit();
 
     SDL_DestroyWindow(window);

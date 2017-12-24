@@ -21,4 +21,24 @@
 #undef HASH_DESTROY
 #undef HASH_FIND
 
+// iterate all elements in the hash
+void hash_ul_each(hash_ul_t * h, void (* cb)(unsigned long key, void * data, void * ud), void * ud);
+
+/*
+typedef struct {
+  hash_ul_entry_t ** lcur;
+  hash_ul_entry_t ** lend;
+  hash_ul_entry_t * e;
+  void * elem;
+  unsigned long key;
+} hash_ul_iter;
+
+static inline void hash_ul_first(hash_ul_iter * it, hash_ul_t * h) {
+  it->lcur = h->table;
+  it->lend = h->table + h->table_size;
+}
+static inline void hash_ul_next(hash_ul_iter * it) {
+}
+*/
+
 #endif

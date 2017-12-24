@@ -6,6 +6,8 @@ GFX_MODULE_SRC += src/gfx/gfx.c
 
 SCENE_MODULE_SRC += src/scene/scene.c
 SCENE_MODULE_SRC += src/scene/draw.c
+SCENE_MODULE_SRC += src/scene/tiles.c
+SCENE_MODULE_SRC += src/scene/objects.c
 
 ASSET_MODULE_SRC += src/asset/png.c
 
