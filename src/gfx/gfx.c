@@ -86,6 +86,13 @@ void gfx_draw_sprite(const gfx_Sprite * spr, int x, int y, const gfx_Color * col
                         spr->size_y, };
 
   SDL_RenderCopy(rr, tex, &src_rekt, &dst_rekt);
+
+  /*
+  SDL_SetRenderDrawColor(rr, 0xFF, 0x00, 0x00, 0xFF);
+  SDL_RenderDrawRect(rr, &dst_rekt);
+  SDL_SetRenderDrawColor(rr, 0x00, 0x00, 0xFF, 0xFF);
+  SDL_RenderDrawPoint(rr, x, y);
+  */
 }
 
 void gfx_draw_surface(const SDL_Surface * surf, int x, int y, const gfx_Color * color) {

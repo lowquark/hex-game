@@ -2,64 +2,113 @@
 #include <assert.h>
 
 #include <util/hash_ul.h>
+#include <asset/png.h>
+
 #include <scene/sprites.h>
 
-hash_ul_t scene_sprites;
+scene_sprite_list_t sprites;
+long sprite_num;
 
-static scene_Sprite ** sorted_sprites;
+static gfx_SpriteSheet * tiles = NULL;
+gfx_Sprite single_tile_sprite;
+static gfx_Sprite grass_tile_sprite;
+static gfx_Sprite hero_sprite;
+static gfx_Sprite wall_sprite;
 
-scene_Sprite * scene_sprite(unsigned long id) {
-  scene_Sprite * s = hash_ul_find(&scene_sprites, id);
-  if(!s) {
-    s = hash_ul_create(&scene_sprites, id, sizeof(scene_Sprite));
+/*
+static void ll_remove(scene_sprite_list_t * this) {
+  this->prev->next = this->next;
+  this->next->prev = this->prev;
+  this->next = this;
+  this->prev = this;
+  this->head = this;
+}
+static void ll_insert_after(scene_sprite_list_t * this, scene_sprite_list_t * other) {
+  ll_remove(this);
+  this->prev = other;
+  this->next = other->next;
+  other->next = this;
+  this->next->prev = this;
+  this->head = other->head;
+}
+static scene_sprite_list_t * ll_next(scene_sprite_list_t * this) {
+  if(this->next != this->head) {
+    return this->next;
+  } else {
+    return NULL;
   }
-  return s;
-}
-scene_Sprite * scene_getsprite(unsigned long id) {
-  return hash_ul_find(&scene_sprites, id);
-}
-void scene_clearsprite(unsigned long id) {
-  hash_ul_destroy(&scene_sprites, id);
-}
-
-static void add_to_sorted_sprites(unsigned long id, void * s, void * i) {
-  unsigned long * idx = i;
-  scene_Sprite * sprite = s;
-
-  sorted_sprites[*idx] = sprite;
-  *idx = *idx + 1;;
 }
 
 static int compare_sprite_y(const void * s1, const void * s2) {
-  const scene_Sprite * sprite1 = *(const scene_Sprite **)s1;
-  const scene_Sprite * sprite2 = *(const scene_Sprite **)s2;
+  const scene_sprite_t * sprite1 = *(const scene_sprite_t **)s1;
+  const scene_sprite_t * sprite2 = *(const scene_sprite_t **)s2;
 
   if(sprite1->y < sprite2->y) {
     return -1;
   } else if(sprite1->y > sprite2->y) {
     return 1;
   } else {
-    return 0;
+    if(sprite1->x < sprite2->x) {
+      return 1;
+    } else if(sprite1->x > sprite2->x) {
+      return -1;
+    } else {
+      return 0;
+    }
   }
 }
+*/
 
-// allocated once, ends with a sentinel NULL
-scene_Sprite ** scene_sortsprites() {
-  unsigned long sprite_num = scene_sprites.entry_count;
+void scene_sprites_load() {
+  SDL_Surface * tiles_surface = asset_png_load("test.png");
 
-  // +1 for sentinel
-  sorted_sprites = realloc(sorted_sprites, sizeof(sorted_sprites[0])*(sprite_num + 1));
+  if(tiles_surface) {
+    tiles = gfx_load_spritesheet(tiles_surface);
 
-  unsigned long idx = 0;
-  hash_ul_each(&scene_sprites, add_to_sorted_sprites, &idx);
+    single_tile_sprite = gfx_sprite(tiles,  0,  0, 28, 20, 14, 10);
+    grass_tile_sprite  = gfx_sprite(tiles, 28,  0, 28, 20, 14, 10);
+    hero_sprite        = gfx_sprite(tiles,  0, 20, 20, 20, 10, 15);
+    wall_sprite        = gfx_sprite(tiles, 29, 26, 28, 25, 14, 15);
 
-  assert(sprite_num == idx);
+    SDL_FreeSurface(tiles_surface);
+    tiles_surface = NULL;
+  }
+}
+void scene_sprites_unload() {
+  gfx_unload_spritesheet(tiles);
+  tiles = NULL;
+}
 
-  // set sentinel
-  sorted_sprites[sprite_num] = NULL;
+void scene_sprites_draw() {
+  /*
+  scene_sprite_list_t * spr = ll_next(&sprites);
 
-  qsort(sorted_sprites, sprite_num, sizeof(sorted_sprites[0]), compare_sprite_y);
+  scene_sprite_t * sorted_sprites[sprite_num];
 
-  return sorted_sprites;
+  extern gfx_Sprite hero_sprite;
+
+  long i = 0;
+
+  while(spr) {
+    sorted_sprites[i ++] = spr->owner;
+    spr = ll_next(spr);
+  }
+
+  qsort(sorted_sprites, (size_t)sprite_num, sizeof(sorted_sprites[0]), compare_sprite_y);
+
+  for(i = 0 ; i < sprite_num ; i ++) {
+
+    scene_sprite_t * spr = sorted_sprites[i];
+    gfx_Color c = spr->color;
+
+    if(spr->sprite_id == SCENE_SPRITE_TILE_SOLID) {
+      gfx_draw_sprite(&single_tile_sprite, spr->x, spr->y, &c);
+    } else if(spr->sprite_id == SCENE_SPRITE_TILE_DITHER_0) {
+      gfx_draw_sprite(&grass_tile_sprite, spr->x, spr->y, &c);
+    } else if(spr->sprite_id == SCENE_SPRITE_HERO) {
+      gfx_draw_sprite(&hero_sprite, spr->x, spr->y, &c);
+    }
+  }
+  */
 }
 

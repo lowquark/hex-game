@@ -33,7 +33,7 @@ typedef struct {
 // initializes a rendering context given `window`
 void gfx_init(SDL_Window * window);
 // deinitializes everything, frees all spritesheets
-void gfx_deinit();
+void gfx_deinit(void);
 
 // load a texture for `surf`, stores in spritesheet
 gfx_SpriteSheet * gfx_load_spritesheet(const SDL_Surface * surf);
@@ -53,7 +53,7 @@ void gfx_draw_sprite(const gfx_Sprite * spr, int x, int y, const gfx_Color * sha
 void gfx_draw_surface(const SDL_Surface * surf, int x, int y, const gfx_Color * shade);
 
 void gfx_clear(const gfx_Color * color);
-void gfx_flush();
+void gfx_flush(void);
 
 
 #endif

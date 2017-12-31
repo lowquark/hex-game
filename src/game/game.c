@@ -29,6 +29,7 @@ void game_load() {
 void game_save() {
 }
 
+/*
 static const game_color_t nespresso[5] = {
   GAME_COLOR_FROM24(0x2e2e2c),
   GAME_COLOR_FROM24(0x402108),
@@ -36,6 +37,7 @@ static const game_color_t nespresso[5] = {
   GAME_COLOR_FROM24(0xbd6416),
   GAME_COLOR_FROM24(0xfdaf3e),
 };
+*/
 static const game_color_t grassy[5] = {
   GAME_COLOR_FROM24(0x67ab05),
   GAME_COLOR_FROM24(0x80bf26),
@@ -43,11 +45,13 @@ static const game_color_t grassy[5] = {
   GAME_COLOR_FROM24(0xc8ff66),
   GAME_COLOR_FROM24(0xe9ff96),
 };
+/*
 static const game_color_t dirty[3] = {
   GAME_COLOR_FROM24(0x7e5f40),
   GAME_COLOR_FROM24(0x725222),
   GAME_COLOR_FROM24(0x6d4720),
 };
+*/
 
 // 
 void game_drawstate(const game_DrawStateHandlers * state) {

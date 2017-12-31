@@ -1,0 +1,25 @@
+
+.sheet mobs.png
+
+.param4i frame   0   0  16  16
+.param3i color 255 255 255
+
+.signal idle idle
+.signal walk walk
+
+idle:
+  set4i frame  0  0 16 16
+  flush 20
+  set4i frame  0 16 16 16
+  flush 20 idle
+
+walk:
+  set4i frame 16  0 16 16
+  flush 5
+  set4i frame 16 16 16 16
+  flush 5
+  set4i frame 16 32 16 16
+  flush 5
+  set4i frame 16 48 16 16
+  flush 5 walk
+

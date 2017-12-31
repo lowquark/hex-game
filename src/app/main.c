@@ -11,10 +11,12 @@
 #include <game/game.h>
 #include <asset/png.h>
 #include <scene/scene.h>
+#include <scene/sprites.h>
 
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
+
 
 static hex_vec2i_t selected_hex;
 
@@ -81,9 +83,13 @@ int main(int argc, char ** argv) {
     gfx_init(window);
     scene_load_assets();
 
-    for(unsigned long i = 0 ; i < 20 ; i ++) {
+    for(int i = 0 ; i < 20 ; i ++) {
       scene_object_state_t obj = SCENE_OBJECT_STATE_NULL;
-      scene_object_load(i, &obj);
+
+      obj.pos.x = i % 4;
+      obj.pos.y = i / 4;
+
+      //scene_object_load(id++, &obj);
     }
 
     game_DrawStateHandlers handlers = {
@@ -114,6 +120,7 @@ int main(int argc, char ** argv) {
           break;
         }
       }
+      SDL_Delay(0);
     }
 
     scene_clear();

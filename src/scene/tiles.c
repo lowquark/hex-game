@@ -2,8 +2,13 @@
 #include <util/hash_2i.h>
 
 #include <scene/tiles.h>
+#include <assert.h>
 
 static hash_2i_t tiles;
+
+//static const int tile_spacing_x_pixels = 23;
+//static const int tile_spacing_y_pixels = 20;
+//static const int tile_stagger_y_pixels = tile_spacing_y_pixels / 2;
 
 void scene_tiles_unload(void) {
   hash_2i_clear(&tiles);
@@ -11,6 +16,16 @@ void scene_tiles_unload(void) {
 
 void scene_tiles_tick(void) {
 }
+
+/*
+static void get_screen_coord(int * tile_x_pix, int * tile_y_pix, hex_vec2i_t hex) {
+  assert(tile_x_pix);
+  assert(tile_y_pix);
+
+  *tile_x_pix = hex.x * tile_spacing_x_pixels + 320;
+  *tile_y_pix = hex.y * tile_spacing_y_pixels + 240 + hex.x * tile_stagger_y_pixels;
+}
+*/
 
 void scene_tile_load(hex_vec2i_t hex, const scene_tile_state_t * state) {
   scene_tile_t * tile = hash_2i_find(&tiles, hex.x, hex.y);

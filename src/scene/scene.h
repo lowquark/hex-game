@@ -10,7 +10,7 @@
 
 #include <scene/id.h>
 #include <scene/tiles.h>
-#include <scene/objects.h>
+#include <scene/object.h>
 
 ///////////////////////////
 // high-level management //

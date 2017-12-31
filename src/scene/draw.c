@@ -4,50 +4,25 @@
 #include <hex/hex.h>
 #include <util/hash_2i.h>
 #include <util/hash_ul.h>
-#include <asset/png.h>
 #include <gfx/gfx.h>
 
 #include <scene/scene.h>
 #include <scene/sprites.h>
-
-extern hash_2i_t scene_tile_hash;
-extern hash_ul_t scene_object_hash;
-
-//static hex_vec2i_t selected_hex;
-
-static gfx_SpriteSheet * tiles = NULL;
-static gfx_Sprite single_tile_sprite;
-static gfx_Sprite grass_tile_sprite;
-static gfx_Sprite sub_tile_sprite;
-static gfx_Sprite hero_sprite;
-static gfx_Sprite wall_sprite;
 
 static const int tile_spacing_x_pixels = 23;
 static const int tile_spacing_y_pixels = 20;
 static const int tile_stagger_y_pixels = tile_spacing_y_pixels / 2;
 
 
+
+//static hex_vec2i_t selected_hex;
 void scene_load_assets() {
   scene_unload_assets();
 
-  SDL_Surface * tiles_surface = asset_png_load("test.png");
-
-  if(tiles_surface) {
-    tiles = gfx_load_spritesheet(tiles_surface);
-
-    single_tile_sprite = gfx_sprite(tiles,  0,  0, 28, 20, 14, 10);
-    grass_tile_sprite  = gfx_sprite(tiles, 28,  0, 28, 20, 14, 10);
-    sub_tile_sprite    = gfx_sprite(tiles,  8,  8, 15, 15,  8,  8);
-    hero_sprite        = gfx_sprite(tiles,  0, 20, 20, 20, 10, 15);
-    wall_sprite        = gfx_sprite(tiles, 29, 26, 28, 25, 14, 15);
-
-    SDL_FreeSurface(tiles_surface);
-    tiles_surface = NULL;
-  }
+  scene_sprites_load();
 }
 void scene_unload_assets(void) {
-  gfx_unload_spritesheet(tiles);
-  tiles = NULL;
+  scene_sprites_unload();
 }
 
 
@@ -90,6 +65,8 @@ static void draw_tile(int i, int j) {
 
   const scene_tile_t * tile = scene_tile_find(tile_pos);
 
+  extern gfx_Sprite single_tile_sprite;
+
   if(tile) {
     c = tile->color;
     gfx_draw_sprite(&single_tile_sprite, tile_x_pix, tile_y_pix, &c);
@@ -102,7 +79,7 @@ static void draw_tile(int i, int j) {
   }
 }
 
-void draw_tiles(int imin, int imax, int jmin, int jmax) {
+static void draw_tiles(int imin, int imax, int jmin, int jmax) {
   for(int j = jmin ; j <= jmax ; j ++) {
     for(int i = imin ; i <= imax ; i += 2) {
       draw_tile(i, j);
@@ -113,15 +90,9 @@ void draw_tiles(int imin, int imax, int jmin, int jmax) {
   }
 }
 
-/*
-void draw_objects() {
-  gfx_Color c;
-  c.r = 0xFF;
-  c.g = 0xFF;
-  c.b = 0xFF;
-  c.a = 0xFF;
-  gfx_draw_sprite(&hero_sprite, 100, 100, &c);
-
+static void draw_objects() {
+  /*
+  scene_sprites_draw();
 
   scene_Sprite ** s = scene_sortsprites();
 
@@ -137,8 +108,8 @@ void draw_objects() {
 
     s ++;
   }
+  */
 }
-*/
 
 void scene_tick(void) {
   scene_tiles_tick();
@@ -159,6 +130,6 @@ void scene_draw(void) {
   gfx_clear(&bg_color);
 
   draw_tiles(imin, imax, jmin, jmax);
-  //draw_objects();
+  draw_objects();
 }
 

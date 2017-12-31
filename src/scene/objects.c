@@ -5,6 +5,13 @@
 
 static hash_ul_t objects;
 
-void scene_object_load(scene_id_t oid, const scene_object_state_t * state) {
+void scene_objects_unload(void) {
+  hash_ul_clear(&objects);
+}
+
+void scene_objects_tick(void) {
+}
+
+void scene_objects_draw(void) {
 }
 

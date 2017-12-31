@@ -8,8 +8,11 @@ SCENE_MODULE_SRC += src/scene/scene.c
 SCENE_MODULE_SRC += src/scene/draw.c
 SCENE_MODULE_SRC += src/scene/tiles.c
 SCENE_MODULE_SRC += src/scene/objects.c
+SCENE_MODULE_SRC += src/scene/object.c
+SCENE_MODULE_SRC += src/scene/sprites.c
 
 ASSET_MODULE_SRC += src/asset/png.c
+ASSET_MODULE_SRC += src/asset/lodepng.c
 
 GAME_MODULE_SRC += src/game/game.c
 
@@ -41,13 +44,17 @@ APP_SRC += src/app/main.c
 CFLAGS += -Isrc/
 CFLAGS += -g3
 CFLAGS += -std=c99
-CFLAGS += -Wpedantic
+
 CFLAGS += -Wall
-CFLAGS += -Wconversion
+CFLAGS += -Wextra
+CFLAGS += -Wpedantic
+
+CFLAGS += -Wno-unused-parameter
+CFLAGS += -Werror=implicit-function-declaration
+CFLAGS += -Werror=int-conversion
+CFLAGS += -Werror=strict-prototypes
 
 LIBS += -lSDL2
 LIBS += -lm
-LIBS += -lpng
-LIBS += -lz
 LIBS += -lcheck
 

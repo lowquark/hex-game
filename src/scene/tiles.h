@@ -5,6 +5,7 @@
 #include <gfx/gfx.h>
 
 #include <scene/id.h>
+#include <scene/sprites.h>
 
 
 ///////////
