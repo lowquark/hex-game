@@ -41,6 +41,9 @@ APP_SRC += $(GAME_MODULE_SRC)
 APP_SRC += $(TEST_MODULE_SRC)
 APP_SRC += src/app/main.c
 
+TEST_OBJS = $(patsubst %.c,%.o,$(TEST_SRC))
+APP_OBJS = $(patsubst %.c,%.o,$(APP_SRC))
+
 CFLAGS += -Isrc/
 CFLAGS += -g3
 CFLAGS += -std=c99
