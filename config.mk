@@ -1,36 +1,36 @@
 
 # module sources
-HEX_MODULE_SRC += src/hex/bresenham.c
+HEX_MODULE_SRC += hex/bresenham
 
-GFX_MODULE_SRC += src/gfx/gfx.c
+GFX_MODULE_SRC += gfx/gfx
 
-SCENE_MODULE_SRC += src/scene/scene.c
-SCENE_MODULE_SRC += src/scene/draw.c
-SCENE_MODULE_SRC += src/scene/tiles.c
-SCENE_MODULE_SRC += src/scene/objects.c
-SCENE_MODULE_SRC += src/scene/object.c
-SCENE_MODULE_SRC += src/scene/sprites.c
+SCENE_MODULE_SRC += scene/scene
+SCENE_MODULE_SRC += scene/draw
+SCENE_MODULE_SRC += scene/tiles
+SCENE_MODULE_SRC += scene/objects
+SCENE_MODULE_SRC += scene/object
+SCENE_MODULE_SRC += scene/sprites
 
-ASSET_MODULE_SRC += src/asset/png.c
-ASSET_MODULE_SRC += src/asset/lodepng.c
+ASSET_MODULE_SRC += asset/png
+ASSET_MODULE_SRC += asset/lodepng
 
-GAME_MODULE_SRC += src/game/game.c
+GAME_MODULE_SRC += game/game
 
-UTIL_MODULE_SRC += src/util/hash_2i.c
-UTIL_MODULE_SRC += src/util/hash_ul.c
+UTIL_MODULE_SRC += util/hash_2i
+UTIL_MODULE_SRC += util/hash_ul
 
 # module checks / test module
-TEST_MODULE_SRC += src/test/test.c
+TEST_MODULE_SRC += test/test
 
-TEST_MODULE_SRC += src/hex/check.c
-TEST_MODULE_SRC += src/asset/check.c
-TEST_MODULE_SRC += src/util/check.c
+TEST_MODULE_SRC += hex/check
+TEST_MODULE_SRC += asset/check
+TEST_MODULE_SRC += util/check
 
 # binaries
 TEST_SRC += $(TEST_MODULE_SRC)
 TEST_SRC += $(HEX_MODULE_SRC)
 TEST_SRC += $(UTIL_MODULE_SRC)
-TEST_SRC += src/test/main.c
+TEST_SRC += test/main
 
 APP_SRC += $(HEX_MODULE_SRC)
 APP_SRC += $(UTIL_MODULE_SRC)
@@ -39,10 +39,13 @@ APP_SRC += $(SCENE_MODULE_SRC)
 APP_SRC += $(ASSET_MODULE_SRC)
 APP_SRC += $(GAME_MODULE_SRC)
 APP_SRC += $(TEST_MODULE_SRC)
-APP_SRC += src/app/main.c
+APP_SRC += app/main
 
-TEST_OBJS = $(patsubst %.c,%.o,$(TEST_SRC))
-APP_OBJS = $(patsubst %.c,%.o,$(APP_SRC))
+APP_SRC := $(addprefix src/,$(APP_SRC))
+TEST_SRC := $(addprefix src/,$(TEST_SRC))
+
+TEST_OBJS = $(patsubst %,build/%.o,$(TEST_SRC))
+APP_OBJS = $(patsubst %,build/%.o,$(APP_SRC))
 
 CFLAGS += -Isrc/
 CFLAGS += -g3
