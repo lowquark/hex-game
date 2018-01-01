@@ -1,12 +1,14 @@
 
 #include <check.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 #include <util/hash_2i.h>
 #include <util/hash_ul.h>
 #include <util/objarray.h>
+#include <util/list.h>
 
 #define PRINTF(...)
 //#define PRINTF(...) printf(__VA_ARGS__)
@@ -116,8 +118,7 @@ static void hash_2i_single_run(hash_2i_t * hash) {
   }
 }
 
-START_TEST(test_hash_2i)
-{
+START_TEST(test_hash_2i) {
   srand((unsigned int)time(NULL));
 
   hash_2i_t * hash = calloc(sizeof(*hash), 1);
@@ -128,6 +129,7 @@ START_TEST(test_hash_2i)
 
   hash_2i_clear(hash);
   free(hash);
+  hash = NULL;
 }
 END_TEST
 
@@ -226,8 +228,7 @@ static void hash_ul_single_run(hash_ul_t * hash) {
   }
 }
 
-START_TEST(test_hash_ul)
-{
+START_TEST(test_hash_ul) {
   srand((unsigned int)time(NULL));
 
   hash_ul_t * hash = calloc(sizeof(*hash), 1);
@@ -238,6 +239,7 @@ START_TEST(test_hash_ul)
 
   hash_ul_clear(hash);
   free(hash);
+  hash = NULL;
 }
 END_TEST
 
@@ -369,6 +371,230 @@ START_TEST(test_objarray_dtor)
 END_TEST
 */
 
+
+START_TEST(test_list_basic) {
+  list_t * list;
+  list_node_t * node;
+  int * val;
+  int i;
+
+
+  // create list
+  list = calloc(sizeof(*list), 1);
+  ck_assert_ptr_nonnull(list);
+
+  // should have no elements
+  node = list_begin(list);
+  ck_assert_ptr_null(node);
+
+
+  // insert 200 integers
+  for(i = 0 ; i < 200 ; i ++) {
+    val = malloc(sizeof(*val));
+
+    // because why not
+    ck_assert_ptr_nonnull(val);
+
+    *val = i;
+
+    list_append(list, val);
+
+    // should be the last one
+    ck_assert_ptr_eq(val, list_back(list));
+  }
+
+  // start iteration
+  node = list_begin(list);
+  // should have at least one element
+  ck_assert_ptr_nonnull(node);
+  // next should never return a pointer to the head
+  ck_assert_ptr_ne(node, list);
+
+  i = 0;
+  while(node) {
+    val = list_getvalue(node);
+
+    // there should be a value for each non-null node returned by list_next()
+    ck_assert_ptr_nonnull(val);
+
+    // verify int values
+    ck_assert_int_eq(i, *val);
+
+    node = list_next(node);
+
+    // next should never return a pointer to the head
+    ck_assert_ptr_ne(node, list);
+
+    i ++;
+  }
+
+  // should have iterated 200 times
+  ck_assert_int_eq(i, 200);
+
+  list_each(list, free);
+  list_clear(list);
+  free(list);
+}
+END_TEST
+
+int free_if_multiple_of_3(int * val) {
+  if((*val % 3) == 0) {
+    free(val);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+int list_eraseif_free_if_multiple_of_3(void * v) {
+  return free_if_multiple_of_3(v);
+}
+int list_eraseifi_free_every_third(void * v, long idx) {
+  if((idx % 3) == 0) {
+    free(v);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+START_TEST(test_list_erase) {
+  list_t * list;
+  list_node_t * node;
+  int * val;
+
+  list = calloc(sizeof(*list), 1);
+
+  // insert 200 integers
+  for(int i = 0 ; i < 200 ; i ++) {
+    val = malloc(sizeof(*val));
+
+    // because why not
+    ck_assert_ptr_nonnull(val);
+
+    *val = i;
+
+    list_append(list, val);
+
+    // should be the last one
+    ck_assert_ptr_eq(val, list_back(list));
+  }
+
+  long count_a = 200 - (200 / 3 + 1);
+  long count_b = count_a - (count_a / 3 + 1);
+
+  // erase every third element
+  list_eraseif(list, list_eraseif_free_if_multiple_of_3);
+  ck_assert_int_eq(list_length(list), count_a);
+
+  list_eraseifi(list, list_eraseifi_free_every_third);
+  ck_assert_int_eq(list_length(list), count_b);
+
+  // verify remaining elements are not multiples of 3
+  node = list_begin(list);
+  while(node) {
+    val = list_getvalue(node);
+    // there should be a value for each non-null node returned by list_next()
+    ck_assert_ptr_nonnull(val);
+
+    ck_assert_int_ne(*val % 3, 0);
+
+    node = list_next(node);
+    // next should never return a pointer to the head
+    ck_assert_ptr_ne(node, list);
+  }
+
+  list_each(list, free);
+  list_clear(list);
+
+  free(list);
+  list = NULL;
+}
+END_TEST
+
+START_TEST(test_list_iterate) {
+  list_t * list;
+  list_node_t * fnode;
+  list_node_t * rnode;
+  int * fval;
+  int * rval;
+  int i;
+
+
+  // create list
+  list = calloc(sizeof(*list), 1);
+  ck_assert_ptr_nonnull(list);
+
+  // should have no elements
+  ck_assert_ptr_null(list_begin(list));
+  ck_assert_ptr_null(list_end(list));
+
+
+  // insert 200 integers
+  for(i = 0 ; i < 200 ; i ++) {
+    fval = malloc(sizeof(*fval));
+    rval = malloc(sizeof(*rval));
+    *fval = i;
+    *rval = i;
+
+    list_append(list, fval);
+    list_prepend(list, rval);
+
+    ck_assert_ptr_eq(fval, list_back(list));
+    ck_assert_ptr_eq(rval, list_front(list));
+  }
+
+  ck_assert_int_eq(list_length(list), 400);
+
+  // start iteration
+  fnode = list_begin(list);
+  rnode = list_end(list);
+  // should have at least one element
+  ck_assert_ptr_nonnull(fnode);
+  ck_assert_ptr_nonnull(rnode);
+  // first/last should never return a pointer to the head
+  ck_assert_ptr_ne(fnode, list);
+  ck_assert_ptr_ne(rnode, list);
+
+  for(i = 0 ; i < 200 ; i ++) {
+    fval = list_getvalue(fnode);
+    rval = list_getvalue(rnode);
+
+    ck_assert_ptr_nonnull(fval);
+    ck_assert_ptr_nonnull(rval);
+    ck_assert_ptr_ne(fval, rval);
+
+    ck_assert_int_eq(*fval, 200 - 1 - i);
+    ck_assert_int_eq(*rval, 200 - 1 - i);
+
+    fnode = list_next(fnode);
+    rnode = list_prev(rnode);
+  }
+
+  for(i = 0 ; i < 200 ; i ++) {
+    fval = list_getvalue(fnode);
+    rval = list_getvalue(rnode);
+
+    ck_assert_ptr_nonnull(fval);
+    ck_assert_ptr_nonnull(rval);
+    ck_assert_ptr_ne(fval, rval);
+
+    ck_assert_int_eq(*fval, i);
+    ck_assert_int_eq(*rval, i);
+
+    fnode = list_next(fnode);
+    rnode = list_prev(rnode);
+  }
+
+  ck_assert_ptr_null(fnode);
+  ck_assert_ptr_null(rnode);
+
+  list_each(list, free);
+  list_clear(list);
+  free(list);
+}
+END_TEST
+
+
 Suite * util_check_suite(void) {
   Suite * suite = suite_create("util module");
   TCase * test_case;
@@ -379,6 +605,12 @@ Suite * util_check_suite(void) {
 
   test_case = tcase_create("hash_ul");
   tcase_add_test(test_case, test_hash_ul);
+  suite_add_tcase(suite, test_case);
+
+  test_case = tcase_create("list");
+  tcase_add_test(test_case, test_list_basic);
+  tcase_add_test(test_case, test_list_erase);
+  tcase_add_test(test_case, test_list_iterate);
   suite_add_tcase(suite, test_case);
 
   //test_case = tcase_create("objarray");

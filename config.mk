@@ -18,6 +18,7 @@ GAME_MODULE_SRC += game/game
 
 UTIL_MODULE_SRC += util/hash_2i
 UTIL_MODULE_SRC += util/hash_ul
+UTIL_MODULE_SRC += util/list
 
 # module checks / test module
 TEST_MODULE_SRC += test/test
