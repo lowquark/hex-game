@@ -22,6 +22,7 @@ scene_tile_t * scene_tiles_get(hex_vec2i_t pos);
 
 // load a tile, overwrite existing state if one already exists
 scene_tile_t * scene_tiles_load(hex_vec2i_t hex, const scene_tile_state_t * state);
+
 // unload immediately
 void           scene_tiles_unload(hex_vec2i_t hex);
 

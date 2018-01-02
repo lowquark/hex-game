@@ -4,12 +4,12 @@
 #include <scene/tile.h>
 
 
-void scene_tile_load(scene_tile_t * tile, const scene_tile_state_t * state) {
+void scene_tile_setstate(scene_tile_t * tile, const scene_tile_state_t * state) {
   tile->color = state->color;
   tile->onfire = state->onfire;
   tile->despawn = 0;
 }
-void scene_tile_unload(scene_tile_t * tile) {
+void scene_tile_clear(scene_tile_t * tile) {
 }
 
 
@@ -30,3 +30,4 @@ void scene_tile_extinguish(scene_tile_t * tile) {
 
   tile->onfire = 0;
 }
+

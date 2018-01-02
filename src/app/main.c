@@ -65,7 +65,7 @@ int main(int argc, char ** argv) {
 
   test_all();
 
-  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+  if(SDL_Init(SDL_INIT_VIDEO) != 0) {
     printf("Unable to initialize SDL: %s", SDL_GetError());
     return 1;
   }
@@ -85,12 +85,12 @@ int main(int argc, char ** argv) {
 
     unsigned long id = 0;
     for(int i = 0 ; i < 20 ; i ++) {
-      scene_object_state_t obj = SCENE_OBJECT_STATE_NULL;
+      scene_object_state_t ost = SCENE_OBJECT_STATE_NULL;
 
-      obj.pos.x = i % 4;
-      obj.pos.y = i / 4;
+      ost.pos.x = i % 4;
+      ost.pos.y = i / 4;
 
-      scene_object_load(scene_objects_get(id++), &obj);
+      scene_object_spawn(scene_objects_load(id++, &ost), 0);
     }
 
     game_DrawStateHandlers handlers = {

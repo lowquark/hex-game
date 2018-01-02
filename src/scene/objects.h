@@ -2,7 +2,6 @@
 #define SCENE_OBJECTS_H
 
 #include <hex/hex.h>
-#include <gfx/gfx.h>
 
 #include <scene/id.h>
 #include <scene/object.h>
@@ -17,9 +16,16 @@ void scene_objects_tick(void);
 // draw all objects
 void scene_objects_draw_sprites(void);
 
-// retrieves the object for the given id
-// creates if it doesn't already exist
+
+// retrieve a loaded object
+// returns NULL if not loaded
 scene_object_t * scene_objects_get(scene_id_t id);
+
+// load a object, overwrite existing state if one already exists
+scene_object_t * scene_objects_load(scene_id_t id, const scene_object_state_t * state);
+
+// unload immediately
+void             scene_objects_unload(scene_id_t id);
 
 
 #endif

@@ -43,9 +43,9 @@ int scene_tile_isanimating(scene_tile_t * tile);
 ////////////////////////
 
 // tile state is overwritten if already loaded
-void scene_tile_load(scene_tile_t * tile, const scene_tile_state_t * state);
+void scene_tile_setstate(scene_tile_t * tile, const scene_tile_state_t * state);
 // unload a tile
-void scene_tile_unload(scene_tile_t * tile);
+void scene_tile_clear(scene_tile_t * tile);
 
 
 /////////////////////////

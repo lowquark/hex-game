@@ -44,9 +44,9 @@ int scene_object_isanimating(scene_object_t * obj);
 ////////////////////////
 
 // animations are reset
-void scene_object_load(scene_object_t * obj, const scene_object_state_t * state);
-// draw to gfx
-void scene_object_unload(scene_object_t * obj);
+void scene_object_setstate(scene_object_t * obj, const scene_object_state_t * state);
+
+void scene_object_clear(scene_object_t * obj);
 
 
 /////////////////////////
@@ -54,8 +54,7 @@ void scene_object_unload(scene_object_t * obj);
 /////////////////////////
 
 // reveal & spawn object via animation
-// object state is overwritten if already loaded
-void scene_object_spawn(scene_object_t * obj, int type, const scene_object_state_t * state);
+void scene_object_spawn(scene_object_t * obj, int type);
 // hide & despawn object via animation
 void scene_object_despawn(scene_object_t * obj, int type);
 

@@ -8,9 +8,8 @@
 #define HASH_T        hash_2i_t
 
 #define HASH_CLEAR    hash_2i_clear
-#define HASH_CREATE   hash_2i_create_
-#define HASH_DESTROY  hash_2i_destroy_
-#define HASH_FIND     hash_2i_find_
+#define HASH_GET      hash_2i_get_
+#define HASH_SET      hash_2i_set_
 
 #include "hash_gen.c"
 
@@ -19,26 +18,20 @@
 #undef HASH_T
 
 #undef HASH_CLEAR
-#undef HASH_CREATE
-#undef HASH_DESTROY
-#undef HASH_FIND
+#undef HASH_GET
+#undef HASH_SET
 
-void * hash_2i_create(hash_2i_t * h, int x, int y, size_t size) {
+void * hash_2i_get(hash_2i_t * h, int x, int y) {
   hash_2i_key_t key = { x, y };
-  return hash_2i_create_(h, key, size);
+  return hash_2i_get_(h, key);
 }
 
-void hash_2i_destroy(hash_2i_t * h, int x, int y) {
+void * hash_2i_set(hash_2i_t * h, int x, int y, void * value) {
   hash_2i_key_t key = { x, y };
-  hash_2i_destroy_(h, key);
+  return hash_2i_set_(h, key, value);
 }
 
-void * hash_2i_find(hash_2i_t * h, int x, int y) {
-  hash_2i_key_t key = { x, y };
-  return hash_2i_find_(h, key);
-}
-
-void hash_2i_each(hash_2i_t * h, void (* cb)(int x, int y, void * data, void * ud), void * ud) {
+void hash_2i_each(hash_2i_t * h, void (* cb)(void * data)) {
   unsigned long table_size = h->table_size;
   hash_2i_entry_t ** table = h->table;
 
@@ -47,7 +40,52 @@ void hash_2i_each(hash_2i_t * h, void (* cb)(int x, int y, void * data, void * u
     hash_2i_entry_t * entry = table[i];
 
     while(entry) {
-      cb(entry->key.x, entry->key.y, &entry->data, ud);
+      cb(entry->value);
+      // repeat with the next
+      entry = entry->next;
+    }
+  }
+}
+void hash_2i_eachd(hash_2i_t * h, void (* cb)(void * data, void * ud), void * ud) {
+  unsigned long table_size = h->table_size;
+  hash_2i_entry_t ** table = h->table;
+
+  for(unsigned long i = 0 ; i < table_size ; i ++) {
+    // iterate chain
+    hash_2i_entry_t * entry = table[i];
+
+    while(entry) {
+      cb(entry->value, ud);
+      // repeat with the next
+      entry = entry->next;
+    }
+  }
+}
+void hash_2i_eachk(hash_2i_t * h, void (* cb)(int x, int y, void * data)) {
+  unsigned long table_size = h->table_size;
+  hash_2i_entry_t ** table = h->table;
+
+  for(unsigned long i = 0 ; i < table_size ; i ++) {
+    // iterate chain
+    hash_2i_entry_t * entry = table[i];
+
+    while(entry) {
+      cb(entry->key.x, entry->key.y, entry->value);
+      // repeat with the next
+      entry = entry->next;
+    }
+  }
+}
+void hash_2i_eachkd(hash_2i_t * h, void (* cb)(int x, int y, void * data, void * ud), void * ud) {
+  unsigned long table_size = h->table_size;
+  hash_2i_entry_t ** table = h->table;
+
+  for(unsigned long i = 0 ; i < table_size ; i ++) {
+    // iterate chain
+    hash_2i_entry_t * entry = table[i];
+
+    while(entry) {
+      cb(entry->key.x, entry->key.y, entry->value, ud);
       // repeat with the next
       entry = entry->next;
     }

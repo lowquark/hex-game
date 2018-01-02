@@ -1,10 +1,8 @@
 
-#include <stddef.h>
-
 typedef struct HASH_ENTRY_T {
   struct HASH_ENTRY_T * next;
   HASH_KEY_T key;
-  char data[];
+  void * value;
 } HASH_ENTRY_T;
 
 typedef struct {
@@ -17,15 +15,11 @@ typedef struct {
 extern void HASH_CLEAR(HASH_T * h);
 #endif
 
-#ifdef HASH_CREATE
-extern void * HASH_CREATE(HASH_T * h, HASH_KEY_T key, size_t size);
+#ifdef HASH_GET
+extern void * HASH_GET(HASH_T * h, HASH_KEY_T key);
 #endif
 
-#ifdef HASH_DESTROY
-extern void HASH_DESTROY(HASH_T * h, HASH_KEY_T key);
-#endif
-
-#ifdef HASH_FIND
-extern void * HASH_FIND(HASH_T * h, HASH_KEY_T key);
+#ifdef HASH_SET
+extern void * HASH_SET(HASH_T * h, HASH_KEY_T key, void * value);
 #endif
 

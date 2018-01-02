@@ -16,7 +16,7 @@ int scene_object_animating(scene_object_t * obj) {
 }
 
 
-void scene_object_load(scene_object_t * obj, const scene_object_state_t * state) {
+void scene_object_setstate(scene_object_t * obj, const scene_object_state_t * state) {
   assert(obj);
 
   obj->pos = state->pos;
@@ -28,7 +28,7 @@ void scene_object_clear(scene_object_t * obj) {
 }
 
 
-void scene_object_spawn(scene_object_t * obj, int type, const scene_object_state_t * state) {
+void scene_object_spawn(scene_object_t * obj, int type) {
   assert(obj);
 }
 void scene_object_despawn(scene_object_t * obj, int type) {

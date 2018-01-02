@@ -32,9 +32,11 @@ static void hash_2i_single_run(hash_2i_t * hash) {
     int x = 100 * i + (rand() % 100);
     int y = 100 * i + (rand() % 100);
 
-    uint32_t * data = (uint32_t *)hash_2i_create(hash, x, y, sizeof(uint32_t));
+    uint32_t * data = malloc(sizeof(*data));
 
     ck_assert_ptr_nonnull(data);
+
+    hash_2i_set(hash, x, y, data);
 
     *data = salt;
 
@@ -42,8 +44,6 @@ static void hash_2i_single_run(hash_2i_t * hash) {
     tests[i].x = x;
     tests[i].y = y;
     tests[i].data = data;
-
-    PRINTF("[alloc]  pos: %d, %d  salt: %08X  data: %p\n", x, y, salt, (void *)tests[i].data);
   }
 
   // affirm that data is intact, pointers match those initially returned
@@ -51,9 +51,7 @@ static void hash_2i_single_run(hash_2i_t * hash) {
     int x = tests[i].x;
     int y = tests[i].y;
 
-    uint32_t * data = (uint32_t *)hash_2i_find(hash, x, y);
-
-    PRINTF("[get]  pos: %d, %d  data: %p\n", x, y, (void *)data);
+    uint32_t * data = hash_2i_get(hash, x, y);
 
     ck_assert_ptr_nonnull(data);
     ck_assert_ptr_eq(data, tests[i].data);
@@ -66,11 +64,9 @@ static void hash_2i_single_run(hash_2i_t * hash) {
     int y = tests[i].y;
 
     if((rand() % 10) == 0) {
-      PRINTF("[erase]  pos: %d, %d  data: %p\n", x, y, (void *)tests[i].data);
-
-      hash_2i_destroy(hash, x, y);
-
+      free(tests[i].data);
       tests[i].data = NULL;
+      hash_2i_set(hash, x, y, NULL);
     }
   }
 
@@ -80,9 +76,7 @@ static void hash_2i_single_run(hash_2i_t * hash) {
     int x = tests[i].x;
     int y = tests[i].y;
 
-    uint32_t * data = (uint32_t *)hash_2i_find(hash, x, y);
-
-    PRINTF("[get]  pos: %d, %d  data: %p\n", x, y, (void *)data);
+    uint32_t * data = hash_2i_get(hash, x, y);
 
     ck_assert_ptr_eq(tests[i].data, data);
 
@@ -97,11 +91,9 @@ static void hash_2i_single_run(hash_2i_t * hash) {
       int x = tests[i].x;
       int y = tests[i].y;
 
-      hash_2i_destroy(hash, x, y);
-
-      PRINTF("[free]  pos: %d, %d  data: %p\n", x, y, (void *)tests[i].data);
-
+      free(tests[i].data);
       tests[i].data = NULL;
+      hash_2i_set(hash, x, y, NULL);
     }
   }
 
@@ -110,9 +102,7 @@ static void hash_2i_single_run(hash_2i_t * hash) {
     int x = tests[i].x;
     int y = tests[i].y;
 
-    uint32_t * data = hash_2i_find(hash, x, y);
-
-    PRINTF("[get]  pos: %d, %d  data: %p\n", x, y, (void *)data);
+    uint32_t * data = hash_2i_get(hash, x, y);
 
     ck_assert_ptr_null(data);
   }
@@ -148,26 +138,24 @@ static void hash_ul_single_run(hash_ul_t * hash) {
     // note: impossible to have duplicates, but still very sparse
     unsigned long key = (unsigned long)(100 * i + (rand() % 100));
 
-    uint32_t * data = (uint32_t *)hash_ul_create(hash, key, sizeof(uint32_t));
+    uint32_t * data = malloc(sizeof(*data));
 
     ck_assert_ptr_nonnull(data);
+
+    hash_ul_set(hash, key, data);
 
     *data = salt;
 
     tests[i].salt = salt;
     tests[i].key = key;
     tests[i].data = data;
-
-    PRINTF("[alloc]  key: %lu  salt: %08X  data: %p\n", key, salt, (void *)tests[i].data);
   }
 
   // affirm that data is intact, pointers match those initially returned
   for(int i = 0 ; i < 100 ; i ++) {
     unsigned long key = tests[i].key;
 
-    uint32_t * data = (uint32_t *)hash_ul_find(hash, key);
-
-    PRINTF("[get]  key: %lu  data: %p\n", key, (void *)data);
+    uint32_t * data = hash_ul_get(hash, key);
 
     ck_assert_ptr_nonnull(data);
     ck_assert_ptr_eq(data, tests[i].data);
@@ -179,11 +167,9 @@ static void hash_ul_single_run(hash_ul_t * hash) {
     unsigned long key = tests[i].key;
 
     if((rand() % 10) == 0) {
-      PRINTF("[erase]  key: %lu  data: %p\n", key, (void *)tests[i].data);
-
-      hash_ul_destroy(hash, key);
-
+      free(tests[i].data);
       tests[i].data = NULL;
+      hash_ul_set(hash, key, NULL);
     }
   }
 
@@ -192,9 +178,7 @@ static void hash_ul_single_run(hash_ul_t * hash) {
   for(int i = 0 ; i < 100 ; i ++) {
     unsigned long key = tests[i].key;
 
-    uint32_t * data = (uint32_t *)hash_ul_find(hash, key);
-
-    PRINTF("[get]  key: %lu  data: %p\n", key, (void *)data);
+    uint32_t * data = hash_ul_get(hash, key);
 
     ck_assert_ptr_eq(tests[i].data, data);
 
@@ -208,11 +192,9 @@ static void hash_ul_single_run(hash_ul_t * hash) {
     if(tests[i].data) {
       unsigned long key = tests[i].key;
 
-      hash_ul_destroy(hash, key);
-
-      PRINTF("[free]  key: %d, %d  data: %p\n", key, (void *)tests[i].data);
-
+      free(tests[i].data);
       tests[i].data = NULL;
+      hash_ul_set(hash, key, NULL);
     }
   }
 
@@ -220,9 +202,7 @@ static void hash_ul_single_run(hash_ul_t * hash) {
   for(int i = 0 ; i < 100 ; i ++) {
     unsigned long key = tests[i].key;
 
-    uint32_t * data = hash_ul_find(hash, key);
-
-    PRINTF("[get]  key: %d, %d  data: %p\n", key, (void *)data);
+    uint32_t * data = hash_ul_get(hash, key);
 
     ck_assert_ptr_null(data);
   }

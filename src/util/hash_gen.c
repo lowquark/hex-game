@@ -25,7 +25,7 @@ static HASH_ENTRY_T ** bucket_of(HASH_T * h, HASH_KEY_T key) {
 static void * find(HASH_KEY_T key, HASH_ENTRY_T * list) {
   while(list) {
     if(key_eq(list->key, key)) {
-      return &list->data;
+      return list->value;
     }
     list = list->next;
   }
@@ -98,43 +98,7 @@ void HASH_CLEAR(HASH_T * h) {
   h->table_size = 0;
 }
 
-void * HASH_CREATE(HASH_T * h, HASH_KEY_T key, size_t data_size) {
-  if(h->table == NULL) { 
-    // initialize if not already
-    h->table = calloc(sizeof(HASH_ENTRY_T *), initial_size);
-    h->table_size = initial_size;
-  }
-
-  if(h->entry_count > h->table_size*2) {
-    resize_table(h, h->table_size * 2);
-  }
-
-  HASH_ENTRY_T ** slot = bucket_of(h, key);
-
-  // advance last slot
-  while(*slot) {
-    HASH_ENTRY_T * entry = *slot;
-
-    if(key_eq(entry->key, key)) {
-      // already exists, fail
-      return NULL;
-    }
-
-    slot = &(*slot)->next;
-  }
-
-  // reached end of chain, create a new entry
-  HASH_ENTRY_T * new_entry = calloc(sizeof(HASH_ENTRY_T) + data_size, 1);
-  new_entry->key = key;
-  new_entry->next = NULL;
-  *slot = new_entry;
-
-  h->entry_count ++;
-
-  // return the address of the new data
-  return &new_entry->data;
-}
-void HASH_DESTROY(HASH_T * h, HASH_KEY_T key) {
+static void hash_erase(HASH_T * h, HASH_KEY_T key) {
   if(h->table == NULL) { return; }
 
   HASH_ENTRY_T ** slot = bucket_of(h, key);
@@ -156,9 +120,59 @@ void HASH_DESTROY(HASH_T * h, HASH_KEY_T key) {
     slot = &entry->next;
   }
 }
-void * HASH_FIND(HASH_T * h, HASH_KEY_T key) {
+
+static void hash_insert(HASH_T * h, HASH_KEY_T key, void * value) {
+  assert(h);
+
+  if(h->table == NULL) { 
+    // initialize if not already
+    h->table = calloc(sizeof(HASH_ENTRY_T *), initial_size);
+    h->table_size = initial_size;
+  }
+
+  if(h->entry_count > h->table_size*2) {
+    resize_table(h, h->table_size * 2);
+  }
+
+  HASH_ENTRY_T ** slot = bucket_of(h, key);
+
+  // advance last slot
+  while(*slot) {
+    HASH_ENTRY_T * entry = *slot;
+
+    if(key_eq(entry->key, key)) {
+      // already exists, overwrite
+      entry->value = value;
+      return;
+    }
+
+    slot = &(*slot)->next;
+  }
+
+  // reached end of chain, create a new entry
+  HASH_ENTRY_T * new_entry = malloc(sizeof(*new_entry));
+  new_entry->next = NULL;
+  new_entry->key = key;
+  new_entry->value = value;
+  *slot = new_entry;
+
+  h->entry_count ++;
+}
+
+void * HASH_GET(HASH_T * h, HASH_KEY_T key) {
   if(h->table == NULL) { return NULL; }
 
   return find(key, *bucket_of(h, key));
+}
+void * HASH_SET(HASH_T * h, HASH_KEY_T key, void * value) {
+  assert(h);
+
+  if(value == NULL) {
+    hash_erase(h, key);
+  } else {
+    hash_insert(h, key, value);
+  }
+
+  return value;
 }
 
