@@ -1,59 +1,239 @@
 {
-   x_bullshit
-   Memcheck:Leak
-   match-leak-kinds: definite
-   ...
-   fun:XSetLocaleModifiers
-   ...
-}
-{
-   sdl_bullshit_1
-   Memcheck:Addr1
-   ...
-   obj:/usr/lib/libSDL2-2.0.so.0.7.0
-   ...
-}
-{
-   sdl_bullshit_2
-   Memcheck:Addr2
-   ...
-   obj:/usr/lib/libSDL2-2.0.so.0.7.0
-   ...
-}
-{
-   sdl_bullshit_4
-   Memcheck:Addr4
-   ...
-   obj:/usr/lib/libSDL2-2.0.so.0.7.0
-   ...
-}
-{
-   sdl_bullshit_8
-   Memcheck:Addr8
-   ...
-   obj:/usr/lib/libSDL2-2.0.so.0.7.0
-   ...
-}
-{
-   xcb_param
-   Memcheck:Param
-   writev(vector[...])
-   ...
-   obj:/usr/lib/libxcb.so.1.1.0
-   ...
-}
-{
-   i965_dri_a4
-   Memcheck:Addr4
-   ...
-   obj:/usr/lib/xorg/modules/dri/i965_dri.so
-   ...
-}
-{
-   i965_dri_a8
-   Memcheck:Addr8
-   ...
-   obj:/usr/lib/xorg/modules/dri/i965_dri.so
-   ...
+  dri
+  Memcheck:Value1
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
 }
 
+{
+  dri
+  Memcheck:Value2
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Value4
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Value8
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Value16
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Cond
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Addr1
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Addr2
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Addr4
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Addr8
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Addr16
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Jump
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Free
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Overlap
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Leak
+  ...
+  obj:/usr/lib/xorg/modules/dri/i965_dri.so
+  ...
+}
+
+{
+  dri
+  Memcheck:Value1
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Value2
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Value4
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Value8
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Value16
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Cond
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Addr1
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Addr2
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Addr4
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Addr8
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Addr16
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Jump
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Free
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Overlap
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
+
+{
+  dri
+  Memcheck:Leak
+  ...
+  obj:/usr/lib/libX11.so.6.3.0
+  ...
+}
