@@ -32,7 +32,7 @@ void draw_state_tile(hex_vec2i_t pos, const game_TileState * state) {
   tst.color.g = state->color.g;
   tst.color.b = state->color.b;
   tst.color.a = 0xFF;
-  scene_tile_load(pos, &tst);
+  scene_tile_spawn(scene_tiles_load(pos, &tst), 0);
 
   //printf("<%d,%d>\n", pos.x, pos.y);
 }
@@ -83,13 +83,14 @@ int main(int argc, char ** argv) {
     gfx_init(window);
     scene_load_assets();
 
+    unsigned long id = 0;
     for(int i = 0 ; i < 20 ; i ++) {
       scene_object_state_t obj = SCENE_OBJECT_STATE_NULL;
 
       obj.pos.x = i % 4;
       obj.pos.y = i / 4;
 
-      //scene_object_load(id++, &obj);
+      scene_object_load(scene_objects_get(id++), &obj);
     }
 
     game_DrawStateHandlers handlers = {

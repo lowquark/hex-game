@@ -5,10 +5,11 @@ HEX_MODULE_SRC += hex/bresenham
 GFX_MODULE_SRC += gfx/gfx
 
 SCENE_MODULE_SRC += scene/scene
-SCENE_MODULE_SRC += scene/draw
+SCENE_MODULE_SRC += scene/view
+SCENE_MODULE_SRC += scene/tile
+SCENE_MODULE_SRC += scene/object
 SCENE_MODULE_SRC += scene/tiles
 SCENE_MODULE_SRC += scene/objects
-SCENE_MODULE_SRC += scene/object
 SCENE_MODULE_SRC += scene/sprites
 
 ASSET_MODULE_SRC += asset/png

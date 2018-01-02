@@ -8,9 +8,8 @@
 #include <hex/hex.h>
 #include <gfx/gfx.h>
 
-#include <scene/id.h>
 #include <scene/tiles.h>
-#include <scene/object.h>
+#include <scene/objects.h>
 
 ///////////////////////////
 // high-level management //
@@ -21,11 +20,13 @@ void scene_load_assets(void);
 // unload loaded assets
 void scene_unload_assets(void);
 
+
 // clears everything
 void scene_clear(void);
 
 // update animations
 void scene_tick(void);
+
 // draw via gfx module
 void scene_draw(void);
 
@@ -44,8 +45,8 @@ hex_vec2i_t scene_hexat(int pixel_x, int pixel_y);
 // query animation state //
 ///////////////////////////
 
-// # of remaining ticks until animations are finished
-int  scene_ticks_remaining(void);
+// returns 1 if animations are currently in progress
+int  scene_isanimating(void);
 // skip all animations immediately
 void scene_skip_animations(void);
 

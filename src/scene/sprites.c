@@ -11,9 +11,9 @@ long sprite_num;
 
 static gfx_SpriteSheet * tiles = NULL;
 gfx_Sprite single_tile_sprite;
-static gfx_Sprite grass_tile_sprite;
-static gfx_Sprite hero_sprite;
-static gfx_Sprite wall_sprite;
+gfx_Sprite grass_tile_sprite;
+gfx_Sprite hero_sprite;
+gfx_Sprite wall_sprite;
 
 /*
 static void ll_remove(scene_sprite_list_t * this) {

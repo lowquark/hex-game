@@ -31,12 +31,12 @@ typedef struct {
 // high-level control //
 ////////////////////////
 
-// update all objects by one tick
+// update by one tick
 void scene_object_tick(scene_object_t * obj);
-// draw all objects
+// draw this object
 void scene_object_draw(scene_object_t * obj);
 // query whether object is animating
-int scene_object_animating(scene_object_t * obj);
+int scene_object_isanimating(scene_object_t * obj);
 
 
 ////////////////////////
