@@ -25,15 +25,26 @@ SDL_Surface * asset_png_load(const char * filename)
     printf("lodepng error %u: %s\n", error, lodepng_error_text(error));
   } else {
     if(w <= INT_MAX && h <= INT_MAX) {
-      surfwidth = (int)w;
-      surfheight = (int)h;
+      surfwidth = w;
+      surfheight = h;
 
       SDL_PixelFormatEnumToMasks(
           SDL_PIXELFORMAT_RGBA32,
           &bpp, &rmask, &gmask, &bmask, &amask);
 
-      surf = SDL_CreateRGBSurfaceFrom(image, surfwidth, surfheight, bpp, surfwidth*4,
-                                      rmask, gmask, bmask, amask);
+      /*
+      printf("<%dx%d>\n", surfwidth, surfheight);
+      printf("bpp: %d\n", bpp);
+      printf("rmask: %08X\n", rmask);
+      printf("gmask: %08X\n", gmask);
+      printf("bmask: %08X\n", bmask);
+      printf("amask: %08X\n", amask);
+      */
+
+      surf = SDL_CreateRGBSurface(0, surfwidth, surfheight, bpp,
+                                  rmask, gmask, bmask, amask);
+
+      memcpy(surf->pixels, image, w*h*bpp/8);
     } else {
       printf("png too large\n");
     }

@@ -35,13 +35,13 @@ gfx_SpriteSheet * gfx_load_spritesheet(const SDL_Surface * surface) {
 
   return ss;
 }
-void gfx_unload_spritesheet(gfx_SpriteSheet * s) {
-  if(s) {
-    SDL_DestroyTexture(s->texture);
-    s->texture = NULL;
-    s->size_x = 0;
-    s->size_y = 0;
-    free(s);
+void gfx_unload_spritesheet(gfx_SpriteSheet * ss) {
+  if(ss) {
+    SDL_DestroyTexture(ss->texture);
+    ss->texture = NULL;
+    ss->size_x = 0;
+    ss->size_y = 0;
+    free(ss);
   }
 }
 
