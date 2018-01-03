@@ -70,12 +70,7 @@ void scene_objects_draw_sprites(void) {
     int x, y;
     scene_view_tilecenter(&x, &y, obj->pos);
 
-    gfx_Color c;
-    c.r = 0xFF;
-    c.g = 0xFF;
-    c.b = 0xFF;
-    c.a = 0xFF;
-    gfx_draw_sprite(&hero_sprite, x, y, &c);
+    gfx_draw_sprite(&hero_sprite, x, y, &obj->color);
 
     lo = list_next(lo);
   }

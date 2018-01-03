@@ -53,11 +53,10 @@ static const game_color_t dirty[3] = {
 };
 */
 
-// 
-void game_drawstate(const game_DrawStateHandlers * state) {
+void game_drawstate(const game_state_handlers_t * state) {
   for(int j = 0 ; j < 8 ; j ++) {
     for(int i = 0 ; i < 8 ; i ++) {
-      game_TileState tile;
+      game_tile_state_t tile;
       hex_vec2i_t pos;
 
       memset(&tile, 0, sizeof(tile));
@@ -91,8 +90,22 @@ void game_drawstate(const game_DrawStateHandlers * state) {
       state->tile(pos, &tile);
     }
   }
+
+  unsigned long id = 0;
+  for(int i = 0 ; i < 20 ; i ++) {
+    game_object_state_t obj;
+
+    memset(&obj, 0, sizeof(obj));
+
+    obj.pos.x = i % 4;
+    obj.pos.y = i / 4;
+    obj.color.r = 0xFF;
+    obj.color.g = 0xFF - i*5;
+    obj.color.b = 0xFF - i*10;
+
+    state->object(id++, &obj);
+  }
 }
-// 
-void game_drawevents(const game_DrawEventHandlers * handlers) {
+void game_drawevents(const game_event_handlers_t * handlers) {
 }
 

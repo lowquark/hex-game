@@ -26,15 +26,26 @@ void draw() {
   gfx_flush();
 }
 
-void draw_state_tile(hex_vec2i_t pos, const game_TileState * state) {
-  scene_tile_state_t tst;
+void on_state_tile(hex_vec2i_t pos, const game_tile_state_t * state) {
+  scene_tile_state_t tst = SCENE_TILE_STATE_NULL;
+
   tst.color.r = state->color.r;
   tst.color.g = state->color.g;
   tst.color.b = state->color.b;
   tst.color.a = 0xFF;
-  scene_tile_spawn(scene_tiles_load(pos, &tst), 0);
 
-  //printf("<%d,%d>\n", pos.x, pos.y);
+  scene_tile_spawn(scene_tiles_load(pos, &tst), 0);
+}
+void on_state_object(game_id_t id, const game_object_state_t * state) {
+  scene_object_state_t ost = SCENE_OBJECT_STATE_NULL;
+
+  ost.pos = state->pos;
+  ost.color.r = state->color.r;
+  ost.color.g = state->color.g;
+  ost.color.b = state->color.b;
+  ost.color.a = 0xFF;
+
+  scene_object_spawn(scene_objects_load(id++, &ost), 0);
 }
 
 void handle_keypress(SDL_Keycode sym) {
@@ -83,18 +94,9 @@ int main(int argc, char ** argv) {
     gfx_init(window);
     scene_load_assets();
 
-    unsigned long id = 0;
-    for(int i = 0 ; i < 20 ; i ++) {
-      scene_object_state_t ost = SCENE_OBJECT_STATE_NULL;
-
-      ost.pos.x = i % 4;
-      ost.pos.y = i / 4;
-
-      scene_object_spawn(scene_objects_load(id++, &ost), 0);
-    }
-
-    game_DrawStateHandlers handlers = {
-      .tile = draw_state_tile,
+    game_state_handlers_t handlers = {
+      .tile = on_state_tile,
+      .object = on_state_object,
     };
     game_drawstate(&handlers);
 

@@ -15,7 +15,7 @@ typedef struct {
   unsigned int onfire : 1;
 } scene_tile_state_t;
 
-#define SCENE_TILE_STATE_NULL { { 0 } }
+#define SCENE_TILE_STATE_NULL { { 0, 0, 0, 0 }, 0 }
 
 typedef struct {
   gfx_Color color;
@@ -23,7 +23,7 @@ typedef struct {
   int despawn;
 } scene_tile_t;
 
-#define SCENE_TILE_NULL { { 0 } }
+#define SCENE_TILE_NULL { { 0, 0, 0, 0 }, 0, 0 }
 
 
 ////////////////////////
