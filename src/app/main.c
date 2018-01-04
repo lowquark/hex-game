@@ -94,11 +94,10 @@ int main(int argc, char ** argv) {
     gfx_init(window);
     scene_load_assets();
 
-    game_state_handlers_t handlers = {
-      .tile = on_state_tile,
-      .object = on_state_object,
-    };
-    game_drawstate(&handlers);
+    game_set_tilestate_handler(on_state_tile);
+    game_set_objectstate_handler(on_state_object);
+
+    game_load();
 
     draw();
 
@@ -125,6 +124,8 @@ int main(int argc, char ** argv) {
       }
       SDL_Delay(0);
     }
+
+    game_clear();
 
     scene_clear();
     scene_unload_assets();

@@ -4,31 +4,6 @@
 #include <string.h>
 
 
-void game_init() {
-}
-void game_deinit() {
-}
-
-void game_step_wait() {
-}
-void game_step_moveupright() {
-}
-void game_step_moveup() {
-}
-void game_step_moveupleft() {
-}
-void game_step_movedownleft() {
-}
-void game_step_movedown() {
-}
-void game_step_movedownright() {
-}
-
-void game_load() {
-}
-void game_save() {
-}
-
 /*
 static const game_color_t nespresso[5] = {
   GAME_COLOR_FROM24(0x2e2e2c),
@@ -53,7 +28,11 @@ static const game_color_t dirty[3] = {
 };
 */
 
-void game_drawstate(const game_state_handlers_t * state) {
+
+void game_clear() {
+}
+
+void game_load() {
   for(int j = 0 ; j < 8 ; j ++) {
     for(int i = 0 ; i < 8 ; i ++) {
       game_tile_state_t tile;
@@ -67,7 +46,7 @@ void game_drawstate(const game_state_handlers_t * state) {
       tile.sprite_id = 1;
       tile.color = grassy[rand() % 5];
 
-      state->tile(pos, &tile);
+      game_out_tilestate(pos, &tile);
 
       memset(&tile, 0, sizeof(tile));
 
@@ -77,7 +56,7 @@ void game_drawstate(const game_state_handlers_t * state) {
       tile.sprite_id = 1;
       tile.color = grassy[rand() % 5];
 
-      state->tile(pos, &tile);
+      game_out_tilestate(pos, &tile);
 
       memset(&tile, 0, sizeof(tile));
 
@@ -87,11 +66,11 @@ void game_drawstate(const game_state_handlers_t * state) {
       tile.sprite_id = 1;
       tile.color = grassy[rand() % 5];
 
-      state->tile(pos, &tile);
+      game_out_tilestate(pos, &tile);
     }
   }
 
-  unsigned long id = 0;
+  game_id_t id = 0;
   for(int i = 0 ; i < 20 ; i ++) {
     game_object_state_t obj;
 
@@ -103,9 +82,24 @@ void game_drawstate(const game_state_handlers_t * state) {
     obj.color.g = 0xFF - i*5;
     obj.color.b = 0xFF - i*10;
 
-    state->object(id++, &obj);
+    game_out_objectstate(id++, &obj);
   }
 }
-void game_drawevents(const game_event_handlers_t * handlers) {
+void game_save() {
+}
+
+void game_step_wait() {
+}
+void game_step_moveupright() {
+}
+void game_step_moveup() {
+}
+void game_step_moveupleft() {
+}
+void game_step_movedownleft() {
+}
+void game_step_movedown() {
+}
+void game_step_movedownright() {
 }
 

@@ -16,6 +16,7 @@ ASSET_MODULE_SRC += asset/png
 ASSET_MODULE_SRC += asset/lodepng
 
 GAME_MODULE_SRC += game/game
+GAME_MODULE_SRC += game/handlers
 
 UTIL_MODULE_SRC += util/hash_2i
 UTIL_MODULE_SRC += util/hash_ul
