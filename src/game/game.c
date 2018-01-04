@@ -46,7 +46,7 @@ void game_load() {
       tile.sprite_id = 1;
       tile.color = grassy[rand() % 5];
 
-      game_out_tilestate(pos, &tile);
+      game_out_loadtile(pos, &tile);
 
       memset(&tile, 0, sizeof(tile));
 
@@ -56,7 +56,7 @@ void game_load() {
       tile.sprite_id = 1;
       tile.color = grassy[rand() % 5];
 
-      game_out_tilestate(pos, &tile);
+      game_out_loadtile(pos, &tile);
 
       memset(&tile, 0, sizeof(tile));
 
@@ -66,11 +66,10 @@ void game_load() {
       tile.sprite_id = 1;
       tile.color = grassy[rand() % 5];
 
-      game_out_tilestate(pos, &tile);
+      game_out_loadtile(pos, &tile);
     }
   }
 
-  game_id_t id = 0;
   for(int i = 0 ; i < 20 ; i ++) {
     game_object_state_t obj;
 
@@ -82,8 +81,22 @@ void game_load() {
     obj.color.g = 0xFF - i*5;
     obj.color.b = 0xFF - i*10;
 
-    game_out_objectstate(id++, &obj);
+    game_out_loadobject(i, &obj);
+    game_out_objectspawn(i, 0);
   }
+
+  hex_vec2i_t pos;
+  pos.x = 1;
+  pos.y = -2;
+  game_out_unloadtile(pos);
+  pos.x = -2;
+  pos.y = 1;
+  game_out_unloadtile(pos);
+  pos.x = 1;
+  pos.y = 1;
+  game_out_unloadtile(pos);
+
+  game_out_unloadobject(19);
 }
 void game_save() {
 }

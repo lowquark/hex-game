@@ -20,7 +20,6 @@ typedef struct {
 typedef struct {
   gfx_Color color;
   unsigned int onfire : 1;
-  int despawn;
 } scene_tile_t;
 
 #define SCENE_TILE_NULL { { 0, 0, 0, 0 }, 0, 0 }
