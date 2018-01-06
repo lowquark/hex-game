@@ -13,6 +13,8 @@
 #include <scene/scene.h>
 #include <scene/sprites.h>
 
+#include <eventlog/eventlog.h>
+
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
@@ -116,16 +118,36 @@ int main(int argc, char ** argv) {
     gfx_init(window);
     scene_load_assets();
 
+
+    // configure game module to send its events to eventlog module
     game_set_loadtile_handler(on_loadtile);
     game_set_unloadtile_handler(on_unloadtile);
+    game_set_cleartiles_handler(eventlog_on_cleartiles);
 
     game_set_loadobject_handler(on_loadobject);
     game_set_unloadobject_handler(on_unloadobject);
+    game_set_clearobjects_handler(eventlog_on_clearobjects);
 
-    game_set_objectspawn_handler(on_objectspawn);
-    game_set_objectdespawn_handler(on_objectdespawn);
+    game_set_objectspawn_handler(eventlog_on_objectspawn);
+    game_set_objectdespawn_handler(eventlog_on_objectdespawn);
+    game_set_objectmove_handler(eventlog_on_objectmove);
+    game_set_objectstrike_handler(eventlog_on_objectstrike);
+
 
     game_load();
+
+
+    /*
+    while(1) {
+      if(game_isplayerturn()) {
+        decideinput();
+      }
+
+      game_simulate(100);
+      animate();
+    }
+    */
+
 
     draw();
 

@@ -21,9 +21,15 @@ typedef struct {
 } game_object_state_t;
 
 
-typedef void (* game_clear_handler_t)(void);
-void game_set_clear_handler(game_clear_handler_t fn);
-void game_out_clear(void);
+// unload all tiles
+typedef void (* game_cleartiles_handler_t)(void);
+void game_set_cleartiles_handler(game_cleartiles_handler_t fn);
+void game_out_cleartiles(void);
+
+// unload all objects
+typedef void (* game_clearobjects_handler_t)(void);
+void game_set_clearobjects_handler(game_clearobjects_handler_t fn);
+void game_out_clearobjects(void);
 
 
 // load the state of a tile
@@ -61,14 +67,14 @@ void game_out_objectdespawn(game_id_t id, int type);
 
 // play a move animation for an object
 // the object's position must be updated afterward
-typedef void (* game_objectmove_handler_t)(game_id_t id, hex_vec2i_t pos);
+typedef void (* game_objectmove_handler_t)(game_id_t id, hex_vec2i_t pos, int type);
 void game_set_objectmove_handler(game_objectmove_handler_t fn);
-void game_out_objectmove(game_id_t id, hex_vec2i_t pos);
+void game_out_objectmove(game_id_t id, hex_vec2i_t pos, int type);
 
 // play a strike animation for an object
-typedef void (* game_objectstrike_handler_t)(game_id_t id, hex_vec2i_t pos);
+typedef void (* game_objectstrike_handler_t)(game_id_t id, hex_vec2i_t pos, int type);
 void game_set_objectstrike_handler(game_objectstrike_handler_t fn);
-void game_out_objectstrike(game_id_t id, hex_vec2i_t pos);
+void game_out_objectstrike(game_id_t id, hex_vec2i_t pos, int type);
 
 // log a game message
 typedef void (* game_message_handler_t)(const char * str);

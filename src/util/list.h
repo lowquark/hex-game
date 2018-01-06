@@ -22,6 +22,8 @@ void list_prepend(list_t * l, void * value);
 // appends a value to the end of the list
 void list_append (list_t * l, void * value);
 
+// TODO: pop_front, pop_back
+
 // returns the value of the first node in the list, or `NULL` if the list is empty
 void * list_front(list_t * l);
 // returns the value of the last node in the list, or `NULL` if the list is empty

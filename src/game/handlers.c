@@ -2,10 +2,11 @@
 #include <game/handlers.h>
 
 
-game_clear_handler_t         clear_fn;
+game_cleartiles_handler_t    cleartiles_fn;
+game_clearobjects_handler_t  clearobjects_fn;
 
-game_loadtile_handler_t    loadtile_fn;
-game_unloadtile_handler_t  unloadtile_fn;
+game_loadtile_handler_t      loadtile_fn;
+game_unloadtile_handler_t    unloadtile_fn;
 
 game_loadobject_handler_t    loadobject_fn;
 game_unloadobject_handler_t  unloadobject_fn;
@@ -21,11 +22,18 @@ game_message_handler_t       message_fn;
 #define TRY_CALL_ARGS(_fn_, ...) if(_fn_) { _fn_(__VA_ARGS__); }
 
 
-void game_set_clear_handler(game_clear_handler_t fn) {
-  clear_fn = fn;
+void game_set_cleartiles_handler(game_cleartiles_handler_t fn) {
+  cleartiles_fn = fn;
 }
-void game_out_clear() {
-  TRY_CALL(clear_fn);
+void game_out_cleartiles() {
+  TRY_CALL(cleartiles_fn);
+}
+
+void game_set_clearobjects_handler(game_clearobjects_handler_t fn) {
+  clearobjects_fn = fn;
+}
+void game_out_clearobjects() {
+  TRY_CALL(clearobjects_fn);
 }
 
 
@@ -75,15 +83,15 @@ void game_out_objectdespawn(game_id_t id, int type) {
 void game_set_objectmove_handler(game_objectmove_handler_t fn) {
   objectmove_fn = fn;
 }
-void game_out_objectmove(game_id_t id, hex_vec2i_t pos) {
-  TRY_CALL_ARGS(objectmove_fn, id, pos);
+void game_out_objectmove(game_id_t id, hex_vec2i_t pos, int type) {
+  TRY_CALL_ARGS(objectmove_fn, id, pos, type);
 }
 
 void game_set_objectstrike_handler(game_objectstrike_handler_t fn) {
   objectstrike_fn = fn;
 }
-void game_out_objectstrike(game_id_t id, hex_vec2i_t pos) {
-  TRY_CALL_ARGS(objectstrike_fn, id, pos);
+void game_out_objectstrike(game_id_t id, hex_vec2i_t pos, int type) {
+  TRY_CALL_ARGS(objectstrike_fn, id, pos, type);
 }
 
 
