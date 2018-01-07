@@ -13,8 +13,6 @@
 #include <scene/scene.h>
 #include <scene/sprites.h>
 
-#include <eventlog/eventlog.h>
-
 #include <app/menu.h>
 #include <app/game.h>
 

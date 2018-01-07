@@ -3,18 +3,11 @@
 
 #include <game/game.h>
 #include <game/handlers.h>
-#include <eventlog/eventlog.h>
+#include <gevbuf/gevbuf.h>
 #include <scene/scene.h>
 #include <gfx/gfx.h>
 
 #include <app/game.h>
-
-
-static void tick() {
-  scene_tick();
-  scene_draw();
-  gfx_flush();
-}
 
 
 void on_loadtile(hex_vec2i_t pos, const game_tile_state_t * state) {
@@ -70,6 +63,33 @@ void on_objectmove(game_id_t id, hex_vec2i_t newpos, int type) {
   }
 }
 
+static game_handlers_t game_handlers = {
+  .cleartiles = NULL,
+  .clearobjects = NULL,
+
+  .loadtile = on_loadtile,
+  .unloadtile = on_unloadtile,
+
+  .loadobject = on_loadobject,
+  .unloadobject = on_unloadobject,
+  .objectmove = on_objectmove,
+  .objectstrike = NULL,
+  .objectdespawn = on_objectdespawn,
+  .objectspawn = on_objectspawn,
+
+  .message = NULL,
+};
+
+static void tick() {
+  // flush all events we can
+  // TODO: stop based on animations
+  while(gevbuf_step()) {}
+
+  scene_tick();
+  scene_draw();
+  gfx_flush();
+}
+
 
 // app game states
 typedef enum {
@@ -103,7 +123,7 @@ void run_on_fixedupdate(void) {
       decide_enter();
     } else {
       // need more simulation
-      // (this feeds events to the eventlog)
+      // (this feeds events to the gevbuf)
       game_simulate(100);
     }
   }
@@ -177,19 +197,11 @@ void finished_enter(void) {
 
 // start game by loading
 void app_game_load(const char * save_name) {
-  // configure game module to send its events to eventlog module
-  game_set_loadtile_handler     (on_loadtile);
-  game_set_unloadtile_handler   (on_unloadtile);
-  game_set_cleartiles_handler   (eventlog_on_cleartiles);
 
-  game_set_loadobject_handler   (on_loadobject);
-  game_set_unloadobject_handler (on_unloadobject);
-  game_set_clearobjects_handler (eventlog_on_clearobjects);
-
-  game_set_objectspawn_handler  (eventlog_on_objectspawn);
-  game_set_objectdespawn_handler(eventlog_on_objectdespawn);
-  game_set_objectmove_handler   (on_objectmove);
-  game_set_objectstrike_handler (eventlog_on_objectstrike);
+  // configure game module to send its events to gevbuf module
+  game_set_handlers(&gevbuf_game_handlers);
+  // configure gevbuf module to send its events to us
+  gevbuf_set_handlers(&game_handlers);
 
   // load saved game
   game_load();
