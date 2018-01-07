@@ -25,9 +25,9 @@
 typedef enum {
   MENU,
   GAME,
-} State;
+} state_t;
 
-State state;
+state_t state;
 
 /*
 static void menu_enter() {
