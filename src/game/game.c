@@ -5,6 +5,8 @@
 #include <string.h>
 
 
+hex_vec2i_t pos;
+
 /*
 static const game_color_t nespresso[5] = {
   GAME_COLOR_FROM24(0x2e2e2c),
@@ -110,16 +112,28 @@ bool game_isplayerturn(void) {
 void game_player_wait() {
 }
 void game_player_moveupright() {
+  pos = hex_upright(pos);
+  game_out_objectmove(0, pos, 0);
 }
 void game_player_moveup() {
+  pos = hex_up(pos);
+  game_out_objectmove(0, pos, 0);
 }
 void game_player_moveupleft() {
+  pos = hex_upleft(pos);
+  game_out_objectmove(0, pos, 0);
 }
 void game_player_movedownleft() {
+  pos = hex_downleft(pos);
+  game_out_objectmove(0, pos, 0);
 }
 void game_player_movedown() {
+  pos = hex_down(pos);
+  game_out_objectmove(0, pos, 0);
 }
 void game_player_movedownright() {
+  pos = hex_downright(pos);
+  game_out_objectmove(0, pos, 0);
 }
 
 // simulates the game by up to `max_ticks` ticks

@@ -10,9 +10,6 @@
 #include <app/game.h>
 
 
-static hex_vec2i_t selected_hex;
-
-
 static void tick() {
   scene_tick();
   scene_draw();
@@ -61,6 +58,15 @@ void on_objectdespawn(game_id_t id, int type) {
 
   if(obj) {
     scene_object_despawn(obj, type);
+  }
+}
+
+void on_objectmove(game_id_t id, hex_vec2i_t newpos, int type) {
+  scene_object_t * obj = scene_objects_get(id);
+
+  if(obj) {
+    //scene_object_move(obj, newpos, obj->pos);
+    obj->pos = newpos;
   }
 }
 
@@ -126,23 +132,34 @@ void decide_on_keydown(SDL_Keycode sym) {
   //printf("deicde: keydown signal received\n");
 
   switch(sym) {
+    case SDLK_SPACE:
+      // wait and run
+      game_player_wait();
+      run_enter();
+      break;
     case SDLK_e:
-      selected_hex = hex_downright(selected_hex);
+      game_player_movedownright();
+      run_enter();
       break;
     case SDLK_w:
-      selected_hex = hex_down(selected_hex);
+      game_player_movedown();
+      run_enter();
       break;
     case SDLK_q:
-      selected_hex = hex_downleft(selected_hex);
+      game_player_movedownleft();
+      run_enter();
       break;
     case SDLK_a:
-      selected_hex = hex_upleft(selected_hex);
+      game_player_moveupleft();
+      run_enter();
       break;
     case SDLK_s:
-      selected_hex = hex_up(selected_hex);
+      game_player_moveup();
+      run_enter();
       break;
     case SDLK_d:
-      selected_hex = hex_upright(selected_hex);
+      game_player_moveupright();
+      run_enter();
       break;
   }
 }
@@ -171,7 +188,7 @@ void app_game_load(const char * save_name) {
 
   game_set_objectspawn_handler  (eventlog_on_objectspawn);
   game_set_objectdespawn_handler(eventlog_on_objectdespawn);
-  game_set_objectmove_handler   (eventlog_on_objectmove);
+  game_set_objectmove_handler   (on_objectmove);
   game_set_objectstrike_handler (eventlog_on_objectstrike);
 
   // load saved game
