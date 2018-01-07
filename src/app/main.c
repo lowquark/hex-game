@@ -15,83 +15,126 @@
 
 #include <eventlog/eventlog.h>
 
+#include <app/menu.h>
+#include <app/game.h>
+
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 
+typedef enum {
+  MENU,
+  GAME,
+} State;
 
-static hex_vec2i_t selected_hex;
+State state;
 
-void draw() {
-  scene_draw();
+/*
+static void menu_enter() {
+  state = MENU;
+}
+*/
 
-  gfx_flush();
+// start game by loading
+static void game_enter(const char * save_name) {
+  state = GAME;
+  app_game_load(save_name);
 }
 
-void on_loadtile(hex_vec2i_t pos, const game_tile_state_t * state) {
-  scene_tile_state_t tst = SCENE_TILE_STATE_NULL;
-
-  tst.color.r = state->color.r;
-  tst.color.g = state->color.g;
-  tst.color.b = state->color.b;
-  tst.color.a = 0xFF;
-
-  scene_tiles_load(pos, &tst);
-}
-void on_unloadtile(hex_vec2i_t pos) {
-  scene_tiles_unload(pos);
-}
-
-void on_loadobject(game_id_t id, const game_object_state_t * state) {
-  scene_object_state_t ost = SCENE_OBJECT_STATE_NULL;
-
-  ost.pos = state->pos;
-  ost.color.r = state->color.r;
-  ost.color.g = state->color.g;
-  ost.color.b = state->color.b;
-  ost.color.a = 0xFF;
-
-  scene_objects_load(id, &ost);
-}
-void on_unloadobject(game_id_t id) {
-  scene_objects_unload(id);
-}
-
-void on_objectspawn(game_id_t id, int type) {
-  scene_object_t * obj = scene_objects_get(id);
-
-  if(obj) {
-    scene_object_spawn(obj, type);
+// dispatch events
+static void handle_update(void) {
+  switch(state) {
+    case MENU:
+      app_menu_update();
+      return;
+    case GAME:
+      app_game_update();
+      return;
+    default:
+      return;
   }
 }
-void on_objectdespawn(game_id_t id, int type) {
-  scene_object_t * obj = scene_objects_get(id);
-
-  if(obj) {
-    scene_object_despawn(obj, type);
+static void handle_fixedupdate(void) {
+  switch(state) {
+    case MENU:
+      app_menu_fixedupdate();
+      return;
+    case GAME:
+      app_game_fixedupdate();
+      return;
+    default:
+      return;
+  }
+}
+static void handle_keydown(SDL_Keycode sym) {
+  switch(state) {
+    case MENU:
+      app_menu_keydown(sym);
+      return;
+    case GAME:
+      app_game_keydown(sym);
+      return;
+    default:
+      return;
+  }
+}
+static void handle_quit(void) {
+  switch(state) {
+    case MENU:
+      app_menu_quit();
+      return;
+    case GAME:
+      app_game_quit();
+      return;
+    default:
+      return;
   }
 }
 
-void handle_keypress(SDL_Keycode sym) {
-  switch(sym) {
-    case SDLK_e:
-      selected_hex = hex_downright(selected_hex);
-      break;
-    case SDLK_w:
-      selected_hex = hex_down(selected_hex);
-      break;
-    case SDLK_q:
-      selected_hex = hex_downleft(selected_hex);
-      break;
-    case SDLK_a:
-      selected_hex = hex_upleft(selected_hex);
-      break;
-    case SDLK_s:
-      selected_hex = hex_up(selected_hex);
-      break;
-    case SDLK_d:
-      selected_hex = hex_upright(selected_hex);
-      break;
+
+void handle_sdl_events() {
+  SDL_Event event;
+  while(SDL_PollEvent(&event)) {
+    if(event.type == SDL_QUIT) {
+      // deliver quit signal
+      handle_quit();
+    } else if(event.type == SDL_KEYDOWN) {
+      if(event.key.keysym.sym == SDLK_0) {
+        // also deliver quit signal
+        handle_quit();
+      } else {
+        // deliver keydown signal
+        handle_keydown(event.key.keysym.sym);
+      }
+    }
+  }
+}
+
+void main_loop() {
+  // enter game state right away
+  game_enter("gg");
+
+  Uint32 last_update_ticks = SDL_GetTicks();
+
+  app_game_quitsignal_t q;
+  while(!app_game_quitsignal(&q)) {
+    // deliver update signal
+    handle_update();
+
+    // subtract current ticks from last_update time/counter
+    Uint32 ticks = SDL_GetTicks();
+    if(ticks - last_update_ticks >= 16) {
+      // more than 16ms have elapsed, add 16ms to last_update time/counter
+      last_update_ticks += 16;
+
+      // deliver fixedupdate signal
+      handle_fixedupdate();
+    }
+
+    handle_sdl_events();
+
+    // yield to os
+    SDL_Delay(0);
   }
 }
 
@@ -118,66 +161,8 @@ int main(int argc, char ** argv) {
     gfx_init(window);
     scene_load_assets();
 
+    main_loop();
 
-    // configure game module to send its events to eventlog module
-    game_set_loadtile_handler(on_loadtile);
-    game_set_unloadtile_handler(on_unloadtile);
-    game_set_cleartiles_handler(eventlog_on_cleartiles);
-
-    game_set_loadobject_handler(on_loadobject);
-    game_set_unloadobject_handler(on_unloadobject);
-    game_set_clearobjects_handler(eventlog_on_clearobjects);
-
-    game_set_objectspawn_handler(eventlog_on_objectspawn);
-    game_set_objectdespawn_handler(eventlog_on_objectdespawn);
-    game_set_objectmove_handler(eventlog_on_objectmove);
-    game_set_objectstrike_handler(eventlog_on_objectstrike);
-
-
-    game_load();
-
-
-    /*
-    while(1) {
-      if(game_isplayerturn()) {
-        decideinput();
-      }
-
-      game_simulate(100);
-      animate();
-    }
-    */
-
-
-    draw();
-
-    bool quit = false;
-    while(!quit) {
-      SDL_Event event;
-      while(SDL_PollEvent(&event)) {
-        if(event.type == SDL_KEYDOWN) {
-          if(event.key.keysym.sym == SDLK_0) {
-            quit = true;
-            break;
-          } else {
-            handle_keypress(event.key.keysym.sym);
-            draw();
-          }
-        } else if(event.type == SDL_WINDOWEVENT) {
-          if(event.window.event == SDL_WINDOWEVENT_EXPOSED) {
-            draw();
-          }
-        } else if(event.type == SDL_QUIT) {
-          quit = true;
-          break;
-        }
-      }
-      SDL_Delay(0);
-    }
-
-    game_clear();
-
-    scene_clear();
     scene_unload_assets();
     gfx_deinit();
 

@@ -65,3 +65,9 @@ hex_vec2i_t scene_hexat(int pixel_x, int pixel_y) {
   return h;
 }
 
+bool scene_isanimating(void) {
+  return false;
+}
+void scene_skip_animations(void) {
+}
+

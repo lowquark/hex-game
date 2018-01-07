@@ -1,5 +1,6 @@
 
 #include <game/game.h>
+#include <game/handlers.h>
 
 #include <string.h>
 
@@ -101,18 +102,27 @@ void game_load() {
 void game_save() {
 }
 
-void game_step_wait() {
+// returns true if it is the player's turn
+bool game_isplayerturn(void) {
+  return true;
 }
-void game_step_moveupright() {
+
+void game_player_wait() {
 }
-void game_step_moveup() {
+void game_player_moveupright() {
 }
-void game_step_moveupleft() {
+void game_player_moveup() {
 }
-void game_step_movedownleft() {
+void game_player_moveupleft() {
 }
-void game_step_movedown() {
+void game_player_movedownleft() {
 }
-void game_step_movedownright() {
+void game_player_movedown() {
+}
+void game_player_movedownright() {
+}
+
+// simulates the game by up to `max_ticks` ticks
+void game_simulate(int max_ticks) {
 }
 

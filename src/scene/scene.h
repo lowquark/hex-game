@@ -46,7 +46,7 @@ hex_vec2i_t scene_hexat(int pixel_x, int pixel_y);
 ///////////////////////////
 
 // returns 1 if animations are currently in progress
-int  scene_isanimating(void);
+bool scene_isanimating(void);
 // skip all animations immediately
 void scene_skip_animations(void);
 

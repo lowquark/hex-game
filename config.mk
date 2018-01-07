@@ -1,5 +1,8 @@
 
 # module sources
+APP_MODULE_SRC += app/game
+APP_MODULE_SRC += app/menu
+
 HEX_MODULE_SRC += hex/bresenham
 
 GFX_MODULE_SRC += gfx/gfx
@@ -37,6 +40,7 @@ TEST_SRC += $(HEX_MODULE_SRC)
 TEST_SRC += $(UTIL_MODULE_SRC)
 TEST_SRC += test/main
 
+APP_SRC += $(APP_MODULE_SRC)
 APP_SRC += $(HEX_MODULE_SRC)
 APP_SRC += $(UTIL_MODULE_SRC)
 APP_SRC += $(GFX_MODULE_SRC)
