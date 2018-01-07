@@ -57,6 +57,15 @@ void scene_objects_clear(void) {
 }
 
 void scene_objects_tick(void) {
+  list_node_t * lo = list_begin(&object_list);
+
+  while(lo) {
+    scene_object_t * obj = list_getvalue(lo);
+
+    scene_object_tick(obj);
+
+    lo = list_next(lo);
+  }
 }
 
 void scene_objects_draw_sprites(void) {
@@ -67,10 +76,7 @@ void scene_objects_draw_sprites(void) {
   while(lo) {
     scene_object_t * obj = list_getvalue(lo);
 
-    int x, y;
-    scene_view_tilecenter(&x, &y, obj->pos);
-
-    gfx_draw_sprite(&hero_sprite, x, y, &obj->color);
+    gfx_draw_sprite(&hero_sprite, obj->x, obj->y, &obj->color);
 
     lo = list_next(lo);
   }

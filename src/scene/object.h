@@ -22,9 +22,16 @@ typedef struct {
   hex_vec2i_t pos;
   unsigned int onfire : 1;
   gfx_Color color;
+
+  hex_vec2i_t target_pos;
+
+  int x, y;
+  int depth;
+
+  int anim_count;
 } scene_object_t;
 
-#define SCENE_OBJECT_NULL { { 0 }, 0, { 0x00, 0x00, 0x00, 0x00 } }
+#define SCENE_OBJECT_NULL { { 0, 0 }, 0, { 0x00, 0x00, 0x00, 0x00 }, { 0, 0 }, 0, 0, 0, 0 }
 
 
 ////////////////////////
@@ -35,8 +42,11 @@ typedef struct {
 void scene_object_tick(scene_object_t * obj);
 // draw this object
 void scene_object_draw(scene_object_t * obj);
+
 // query whether object is animating
 int scene_object_isanimating(scene_object_t * obj);
+// skip current animation
+void scene_object_skipanimation(scene_object_t * obj);
 
 
 ////////////////////////
@@ -59,7 +69,7 @@ void scene_object_spawn(scene_object_t * obj, int type);
 void scene_object_despawn(scene_object_t * obj, int type);
 
 // show object moving from src to dst
-void scene_object_move(scene_object_t * obj, hex_vec2i_t src, hex_vec2i_t dst);
+void scene_object_move(scene_object_t * obj, hex_vec2i_t dst);
 
 // show object striking dst
 void scene_object_strike(scene_object_t * obj, hex_vec2i_t dst);

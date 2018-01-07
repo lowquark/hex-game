@@ -65,8 +65,8 @@ void on_objectmove(game_id_t id, hex_vec2i_t newpos, int type) {
   scene_object_t * obj = scene_objects_get(id);
 
   if(obj) {
-    //scene_object_move(obj, newpos, obj->pos);
-    obj->pos = newpos;
+    scene_object_skipanimation(obj);
+    scene_object_move(obj, newpos);
   }
 }
 
